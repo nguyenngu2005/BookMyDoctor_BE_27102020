@@ -51,6 +51,5 @@ namespace BookMyDoctor_WebAPI.Models
         public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
         public bool IsActive { get; set; } = true; // default true
 
-        public Schedule? Schedule { get; set; }
     }
 }

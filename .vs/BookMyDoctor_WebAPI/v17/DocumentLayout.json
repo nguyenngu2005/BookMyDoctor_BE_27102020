@@ -1,41 +1,53 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\",
+  "WorkspaceRootPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\services\\scheduleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\scheduleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\services\\patientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\patientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\controllers\\doctorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\controllers\\doctorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\repositories\\doctorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\repositories\\doctorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\services\\bookappointmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\bookappointmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\models\\doctor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\models\\doctor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\models\\doctor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\repositories\\ischedulerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\models\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\models\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\data\\dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\data\\dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\services\\scheduleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\scheduleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\services\\patientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\patientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\controllers\\doctorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\controllers\\doctorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\repositories\\doctorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\repositories\\doctorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\services\\bookappointmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\bookappointmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\repositories\\ischedulerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\repositories\\ischedulerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\swp391_project\\back\\bookmydoctor_webapi\\bookmydoctor_webapi\\controllers\\schedulecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020\\bookmydoctor_webapi\\controllers\\schedulecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\controllers\\schedulecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -46,7 +58,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1117,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -59,114 +71,148 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "PatientService.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Services\\PatientService.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\PatientService.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Services\\PatientService.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\PatientService.cs",
-              "ViewState": "AgIAAKEAAAAAAAAAAAAgwKwAAAAcAAAAAAAAAA==",
+              "Title": "Schedule.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Models\\Schedule.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Models\\Schedule.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Models\\Schedule.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Models\\Schedule.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAgwB0AAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-27T06:04:14.608Z",
+              "WhenOpened": "2025-10-28T00:31:45.345Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "DoctorController.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAYwBYAAABFAAAAAAAAAA==",
+              "Title": "DBContext.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Data\\DBContext.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Data\\DBContext.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Data\\DBContext.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Data\\DBContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsBAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-27T06:02:18.353Z",
+              "WhenOpened": "2025-10-28T00:25:27.718Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\appsettings.json",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\appsettings.json",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-28T00:21:52.341Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PatientService.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Services\\PatientService.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\PatientService.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Services\\PatientService.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\PatientService.cs",
+              "ViewState": "AgIAAKEAAAAAAAAAAAAgwKwAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-27T06:04:14.608Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DoctorController.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Controllers\\DoctorController.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAYwBYAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-27T06:02:18.353Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "DoctorRepository.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Repositories\\DoctorRepository.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Repositories\\DoctorRepository.cs",
               "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Repositories\\DoctorRepository.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Repositories\\DoctorRepository.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Repositories\\DoctorRepository.cs",
               "RelativeToolTip": "BookMyDoctor_WebAPI\\Repositories\\DoctorRepository.cs",
               "ViewState": "AgIAAC0AAAAAAAAAAAAgwD8AAABcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-27T05:58:17.29Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-27T05:58:17.29Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "BookAppointmentService.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAswHgAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-27T05:52:07.901Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "BookAppointmentService.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\BookAppointmentService.cs",
-              "ViewState": "AgIAAHcAAAAAAAAAAAAswHgAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-27T05:52:07.901Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
               "Title": "Program.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Program.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Program.cs",
               "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Program.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Program.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Program.cs",
               "RelativeToolTip": "BookMyDoctor_WebAPI\\Program.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAACcAAABGAAAAAAAAAA==",
+              "ViewState": "AgIAALQAAAAAAAAAAAAAAMEAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-27T05:50:54.26Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "Doctor.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Models\\Doctor.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Models\\Doctor.cs",
               "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Models\\Doctor.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Models\\Doctor.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Models\\Doctor.cs",
               "RelativeToolTip": "BookMyDoctor_WebAPI\\Models\\Doctor.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBIAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAAAiwDYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-27T05:48:19.04Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "IScheduleRepository.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Repositories\\IScheduleRepository.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Repositories\\IScheduleRepository.cs",
               "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Repositories\\IScheduleRepository.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Repositories\\IScheduleRepository.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Repositories\\IScheduleRepository.cs",
               "RelativeToolTip": "BookMyDoctor_WebAPI\\Repositories\\IScheduleRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABLAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-27T04:07:13.437Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-27T04:07:13.437Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "ScheduleService.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Services\\ScheduleService.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Services\\ScheduleService.cs",
               "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\ScheduleService.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Services\\ScheduleService.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Services\\ScheduleService.cs",
               "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\ScheduleService.cs",
-              "ViewState": "AgIAAB0AAAAAAAAAAAAQwCsAAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAzwCsAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-27T03:54:49.409Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "ScheduleController.cs",
-              "DocumentMoniker": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
               "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
-              "ToolTip": "E:\\FA25\\SWP391_Project\\Back\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
               "RelativeToolTip": "BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
               "ViewState": "AgIAAFkAAAAAAAAAAAA9wGcAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

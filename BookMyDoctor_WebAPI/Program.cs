@@ -171,14 +171,22 @@ builder.Services.AddSwaggerGen(c =>
 //    .AllowAnyHeader()
 //    .AllowAnyMethod()
 //));
+// ==============Test local host fe API ===========
+//const string AllowFrontend = "AllowFrontend";
+//builder.Services.AddCors(o => o.AddPolicy(AllowFrontend, p => p
+//    .WithOrigins("http://26.240.106.147:3000")   // 👈 IP hoặc domain FE
+//    .AllowAnyHeader()
+//    .AllowAnyMethod()
+//    .AllowCredentials()   // nếu bạn dùng Cookie hoặc Auth Header
+//));
+// ==============Test web be hosting ==============
 const string AllowFrontend = "AllowFrontend";
 builder.Services.AddCors(o => o.AddPolicy(AllowFrontend, p => p
-    .WithOrigins("http://26.240.106.147:3000")   // 👈 IP hoặc domain FE
+    .WithOrigins("https://2doctorcare.id.vn")   // 👈 IP hoặc domain FE
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()   // nếu bạn dùng Cookie hoặc Auth Header
 ));
-
 
 // ================= App =================
 var app = builder.Build();

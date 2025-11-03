@@ -69,16 +69,6 @@
   },
   {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.AuthController",
-    "Method": "Me",
-    "RelativePath": "api/Auth/me",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BookMyDoctor_WebAPI.Controllers.AuthController",
     "Method": "RequestOtp",
     "RelativePath": "api/Auth/request-otp",
     "HttpMethod": "POST",

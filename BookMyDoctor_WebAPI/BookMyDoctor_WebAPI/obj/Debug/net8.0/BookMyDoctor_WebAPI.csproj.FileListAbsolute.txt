@@ -731,6 +731,7 @@ E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Deb
 E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Debug\net8.0\BookMyDoctor_WebAPI.csproj.CoreCompileInputs.cache
 E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Debug\net8.0\BookMyDoctor_WebAPI.MvcApplicationPartsAssemblyInfo.cs
 E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Debug\net8.0\BookMyDoctor_WebAPI.MvcApplicationPartsAssemblyInfo.cache
+E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Debug\net8.0\BookMyDoctor_WebAPI.sourcelink.json
 E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Debug\net8.0\rjimswa.dswa.cache.json
 E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
 E:\FA25\Back\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\BookMyDoctor_WebAPI\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json

@@ -1,399 +1,248 @@
-﻿// Services/AuthService.cs
-using BookMyDoctor_WebAPI.Controllers;
-using BookMyDoctor_WebAPI.Data.Repositories;
-using BookMyDoctor_WebAPI.Models;
-using BookMyDoctor_WebAPI.RequestModel;
-using Microsoft.Extensions.Configuration;
-using System.Security.Cryptography;
-using System.Text;
-using static BookMyDoctor_WebAPI.Data.Repositories.AuthRepository;
+﻿// Controllers/AuthController.cs
+using BookMyDoctor_WebAPI.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http; // CookieOptions, SameSiteMode
+using System.Net;
+using System.Security.Claims;
 
-namespace BookMyDoctor_WebAPI.Services
+namespace BookMyDoctor_WebAPI.Controllers
 {
-    // ====================== RESULT MODELS (service -> controller) ======================
-    public enum AuthError
+    [ApiController]
+    [Route("api/[controller]")]
+    public sealed class AuthController : ControllerBase
     {
-        None = 0, MissingInput, NotFound, InvalidCredential, InvalidToken, WeakPassword, Internal,
-        BadRequest,
-        ServerError,
-        AccountDisabled,
-        Expired
-    }
-
-    public sealed record ServiceResult<T>(bool Success, T? Data, AuthError Error, string? Message)
-    {
-        public static ServiceResult<T> Ok(T data) => new(true, data, AuthError.None, null);
-        public static ServiceResult<T> Fail(AuthError err, string msg) => new(false, default, err, msg);
-    }
-
-    public sealed record LoginResult(User User, bool Upgraded);
-    public sealed record EmptyResult;
-
-    // ===== NEW MODELS for 2-step OTP =====
-    public sealed record OtpVerifiedResult(string OtpToken);
-    public sealed record OtpChangePasswordByTokenRequest
-    {
-        public string OtpToken { get; init; } = default!;
-        public string NewPassword { get; init; } = default!;
-        public string ConfirmNewPassword { get; init; } = default!;
-    }
-
-    public sealed record ResetPayload(int UserId, string PwdFingerprint);
-
-    // ====================== INTERFACES ======================
-    public interface IAuthService
-    {
-        Task<ServiceResult<LoginResult>> ValidateLoginAsync(LoginRequest req, CancellationToken ct = default);
-        Task<ServiceResult<EmptyResult>> ChangePasswordAsync(int userId, ChangePasswordRequest req, CancellationToken ct = default);
-
-        Task<ServiceResult<EmptyResult>> SendOtpAsync(OtpRequest req, CancellationToken ct = default);
-
-        // Old combined flow (giữ để tương thích – không dùng cho UI tách bước)
-        Task<ServiceResult<EmptyResult>> VerifyOtpAndResetPasswordAsync(VerifyOtpRequest req, CancellationToken ct = default);
-
-        // New 2-step flow
-        Task<ServiceResult<OtpVerifiedResult>> VerifyOtpAsync(VerifyOtpOnlyRequest req, CancellationToken ct = default);
-        Task<ServiceResult<EmptyResult>> ResetPasswordWithOtpTokenAsync(OtpChangePasswordByTokenRequest req, CancellationToken ct = default);
-    }
-
-    // ====================== IMPLEMENTATION ======================
-    public sealed class AuthService : IAuthService
-    {
-        private readonly IAuthRepository _repo;
-        private readonly IPasswordHasher _hasher;
-        private readonly IOtpRepository _otpRepo;
         private readonly IConfiguration _config;
+        private readonly IAuthService _svc;
+        private readonly ILogger<AuthController> _logger;
 
-        private static readonly TimeZoneInfo _tzVN =
-            (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            ? TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")
-            : TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh");
-
-        public AuthService(
-            IAuthRepository repo,
-            IPasswordHasher hasher,
-            ITimeLimitedToken timeToken, // kept for DI compatibility, not used below
-            IOtpRepository otpRepo,
-            IConfiguration config)
+        public AuthController(IAuthService svc, IConfiguration config, ILogger<AuthController> logger)
         {
-            _repo = repo;
-            _hasher = hasher;
-            _otpRepo = otpRepo;
             _config = config;
+            _svc = svc;
+            _logger = logger;
         }
 
-        // ---------------------- LOGIN ----------------------
-        public async Task<ServiceResult<LoginResult>> ValidateLoginAsync(LoginRequest req, CancellationToken ct = default)
-        {
-            if (req is null || string.IsNullOrWhiteSpace(req.UsernameOrPhoneOrEmail) || string.IsNullOrWhiteSpace(req.Password))
-                return ServiceResult<LoginResult>.Fail(AuthError.MissingInput, "Thiếu thông tin đăng nhập.");
+        private IActionResult SimpleError(string field, string message, int status = 400)
+            => StatusCode(status, new { field, message });
 
-            var user = await _repo.FindByLoginKeyAsync(req.UsernameOrPhoneOrEmail.Trim(), ct);
-            if (user is null)
-                return ServiceResult<LoginResult>.Fail(AuthError.NotFound, "Tài khoản không tồn tại.");
-            if (!user.IsActive)
-                return ServiceResult<LoginResult>.Fail(AuthError.AccountDisabled, "Tài khoản không hoạt động.");
-
-            var ok = _hasher.Verify(req.Password, user.PasswordSalt, user.PasswordHash, out bool needsUpgrade);
-            if (!ok)
-                return ServiceResult<LoginResult>.Fail(AuthError.InvalidCredential, "Tài khoản hoặc mật khẩu không đúng.");
-
-            var upgraded = false;
-            if (needsUpgrade)
+        private IActionResult MapError(AuthError err, string? message, string defaultField = "common")
+            => err switch
             {
-                var (newHash, newSalt) = _hasher.UpgradeToSha512(req.Password);
-                user.PasswordHash = newHash;
-                user.PasswordSalt = newSalt;
-                await _repo.UpdateUserAsync(user, ct);
-                upgraded = true;
-            }
-
-            return ServiceResult<LoginResult>.Ok(new LoginResult(user, upgraded));
-        }
-
-        // ------------------ CHANGE PASSWORD (AUTHED) ------------------
-        public async Task<ServiceResult<EmptyResult>> ChangePasswordAsync(int userId, ChangePasswordRequest req, CancellationToken ct = default)
-        {
-            if (req is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu dữ liệu đầu vào.");
-            if (string.IsNullOrWhiteSpace(req.NewPassword))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu mật khẩu mới.");
-            if (string.IsNullOrWhiteSpace(req.ConfirmNewPassword))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu mật khẩu xác nhận.");
-            if (req.NewPassword.Length < 6)
-                return ServiceResult<EmptyResult>.Fail(AuthError.WeakPassword, "Mật khẩu mới phải ≥ 6 ký tự.");
-            if (req.NewPassword != req.ConfirmNewPassword)
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidCredential, "Mật khẩu mới và xác nhận không khớp.");
-
-            var user = await _repo.FindByIdAsync(userId, ct);
-            if (user is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.NotFound, "Không tìm thấy người dùng.");
-
-            var ok = _hasher.Verify(req.CurrentPassword ?? string.Empty, user.PasswordSalt, user.PasswordHash, out _);
-            if (!ok)
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidCredential, "Mật khẩu hiện tại không đúng.");
-
-            if (req.CurrentPassword == req.NewPassword)
-                return ServiceResult<EmptyResult>.Fail(AuthError.WeakPassword, "Mật khẩu mới không được trùng mật khẩu cũ.");
-
-            var (hash, salt) = _hasher.CreateHash(req.NewPassword);
-            user.PasswordHash = hash;
-            user.PasswordSalt = salt;
-            await _repo.UpdateUserAsync(user, ct);
-
-            TrySendChangedEmail(user);
-            return ServiceResult<EmptyResult>.Ok(new EmptyResult());
-        }
-
-        // ------------------------ OTP SEND ------------------------
-        public async Task<ServiceResult<EmptyResult>> SendOtpAsync(OtpRequest req, CancellationToken ct = default)
-        {
-            if (req is null || string.IsNullOrWhiteSpace(req.Destination))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu thông tin gửi OTP.");
-
-            var dest = req.Destination.Trim();
-            var user = await _repo.FindByLoginKeyAsync(dest, ct);
-            if (user is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.NotFound, "Không tìm thấy người dùng.");
-
-            var otp = Random.Shared.Next(100000, 999999).ToString();
-            var otpHash = _hasher.HashString(otp);
-            var now = DateTimeOffset.UtcNow;
-            var ticket = new OtpTicket
-            {
-                UserId = user.UserId,
-                Purpose = req.Purpose,
-                Channel = req.Channel,
-                OtpHash = otpHash,
-                Destination = dest,
-                CreatedAtUtc = now,
-                ExpireAtUtc = now.AddMinutes(5),
-                Attempts = 0,
-                Used = false
+                AuthError.MissingInput => SimpleError(defaultField, message ?? "Thiếu dữ liệu.", (int)HttpStatusCode.BadRequest),
+                AuthError.NotFound => SimpleError(defaultField, message ?? "Không tìm thấy.", (int)HttpStatusCode.NotFound),
+                AuthError.InvalidCredential => SimpleError(defaultField, message ?? "Thông tin không hợp lệ.", (int)HttpStatusCode.Unauthorized),
+                AuthError.InvalidToken => SimpleError(defaultField, message ?? "Mã/phiên không hợp lệ hoặc đã hết hạn.", (int)HttpStatusCode.Unauthorized),
+                AuthError.WeakPassword => SimpleError("newPassword", message ?? "Mật khẩu quá yếu.", (int)HttpStatusCode.BadRequest),
+                AuthError.AccountDisabled => SimpleError("account", message ?? "Tài khoản bị khóa hoặc không hoạt động.", (int)HttpStatusCode.Forbidden),
+                AuthError.BadRequest => SimpleError(defaultField, message ?? "Yêu cầu không hợp lệ.", (int)HttpStatusCode.BadRequest),
+                AuthError.ServerError => SimpleError("common", message ?? "Lỗi máy chủ.", (int)HttpStatusCode.InternalServerError),
+                AuthError.Expired => SimpleError(defaultField, message ?? "Đã hết hạn.", (int)HttpStatusCode.Unauthorized),
+                AuthError.Internal => SimpleError("common", message ?? "Lỗi máy chủ nội bộ.", (int)HttpStatusCode.InternalServerError),
+                _ => SimpleError("common", "Đã có lỗi xảy ra.", (int)HttpStatusCode.InternalServerError)
             };
-            await _otpRepo.AddAsync(ticket, ct);
 
-            try
-            {
-                using var client = BuildSmtpClient();
-                var expiredVn = TimeZoneInfo.ConvertTime(ticket.ExpireAtUtc, _tzVN);
-                var mail = new System.Net.Mail.MailMessage
-                {
-                    From = new System.Net.Mail.MailAddress(_config["Smtp:User"]!, "BookMyDoctor System"),
-                    Subject = "Mã OTP đặt lại mật khẩu",
-                    IsBodyHtml = true,
-                    Body = $"<p>Mã OTP của bạn: <b>{otp}</b></p>" +
-                           $"<p>Hết hạn: <b>{expiredVn:HH:mm:ss dd/MM/yyyy} (GMT+7)</b></p>"
-                };
-                mail.To.Add(dest);
-                await client.SendMailAsync(mail, ct);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[SMTP ERROR] {ex.Message}");
-                return ServiceResult<EmptyResult>.Fail(AuthError.Internal, "Không gửi được email OTP.");
-            }
-
-            return ServiceResult<EmptyResult>.Ok(new EmptyResult());
+        private IActionResult MapException(Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception in AuthController");
+            return SimpleError("common", "Lỗi máy chủ nội bộ.", (int)HttpStatusCode.InternalServerError);
         }
 
-        // -------------------- OLD: OTP VERIFY + RESET (giữ nguyên) --------------------
-        public async Task<ServiceResult<EmptyResult>> VerifyOtpAndResetPasswordAsync(VerifyOtpRequest req, CancellationToken ct = default)
-        {
-            if (req is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu dữ liệu đầu vào.");
-            if (string.IsNullOrWhiteSpace(req.Destination))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu destination.");
-            if (string.IsNullOrWhiteSpace(req.OtpCode))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu mã OTP.");
-            if (string.IsNullOrWhiteSpace(req.NewPassword))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu mật khẩu mới.");
-            if (string.IsNullOrWhiteSpace(req.ConfirmNewPassword))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu mật khẩu xác nhận.");
-            if (req.NewPassword.Length < 6)
-                return ServiceResult<EmptyResult>.Fail(AuthError.WeakPassword, "Mật khẩu mới phải ≥ 6 ký tự.");
-            if (req.NewPassword != req.ConfirmNewPassword)
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidCredential, "Mật khẩu mới và xác nhận không khớp.");
-
-            var dest = req.Destination.Trim();
-            var otpTicket = await _otpRepo.GetLatestValidAsync(dest, req.Purpose, ct);
-            if (otpTicket is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.NotFound, "Không tìm thấy OTP hợp lệ.");
-            if (DateTimeOffset.UtcNow > otpTicket.ExpireAtUtc)
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidToken, "Mã OTP đã hết hạn.");
-            if (otpTicket.Attempts >= 5)
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidToken, "Nhập sai OTP quá nhiều.");
-
-            if (!_hasher.VerifyString(req.OtpCode, otpTicket.OtpHash))
-            {
-                otpTicket.Attempts++;
-                await _otpRepo.UpdateAsync(otpTicket, ct);
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidToken, "Mã OTP không chính xác.");
-            }
-
-            var user = await _repo.FindByLoginKeyAsync(dest, ct);
-            if (user is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.NotFound, "Không tìm thấy người dùng.");
-
-            var isSameAsOld = _hasher.Verify(req.NewPassword, user.PasswordSalt, user.PasswordHash, out _);
-            if (isSameAsOld)
-                return ServiceResult<EmptyResult>.Fail(AuthError.WeakPassword, "Mật khẩu mới không được trùng mật khẩu cũ.");
-
-            var (hash, salt) = _hasher.CreateHash(req.NewPassword);
-            user.PasswordHash = hash;
-            user.PasswordSalt = salt;
-            otpTicket.Used = true;
-
-            await _repo.UpdateUserAsync(user, ct);
-            await _otpRepo.UpdateAsync(otpTicket, ct);
-
-            TrySendChangedEmail(user);
-            return ServiceResult<EmptyResult>.Ok(new EmptyResult());
-        }
-
-        // -------------------- NEW: STEP-2 VERIFY → otpToken --------------------
-        public async Task<ServiceResult<OtpVerifiedResult>> VerifyOtpAsync(VerifyOtpOnlyRequest req, CancellationToken ct = default)
-        {
-            if (req is null)
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.MissingInput, "Thiếu dữ liệu đầu vào.");
-            if (string.IsNullOrWhiteSpace(req.Destination))
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.MissingInput, "Thiếu email.");
-            if (string.IsNullOrWhiteSpace(req.OtpCode) || req.OtpCode.Length != 6 || !req.OtpCode.All(char.IsDigit))
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.BadRequest, "Mã OTP phải gồm 6 chữ số.");
-
-            var dest = req.Destination.Trim();
-            var otpTicket = await _otpRepo.GetLatestValidAsync(dest, req.Purpose, ct);
-            if (otpTicket is null)
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.NotFound, "Không tìm thấy OTP hợp lệ.");
-            if (DateTimeOffset.UtcNow > otpTicket.ExpireAtUtc)
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.Expired, "Mã OTP đã hết hạn.");
-            if (otpTicket.Attempts >= 5)
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.InvalidToken, "Nhập sai OTP quá nhiều.");
-
-            if (!_hasher.VerifyString(req.OtpCode, otpTicket.OtpHash))
-            {
-                otpTicket.Attempts++;
-                await _otpRepo.UpdateAsync(otpTicket, ct);
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.InvalidToken, "Mã OTP không chính xác.");
-            }
-
-            var user = await _repo.FindByLoginKeyAsync(dest, ct);
-            if (user is null)
-                return ServiceResult<OtpVerifiedResult>.Fail(AuthError.NotFound, "Không tìm thấy người dùng.");
-
-            // otpToken ký HMAC: userId.expUnix.signature
-            var exp = DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds();
-            var sig = Sign($"{user.UserId}.{exp}");
-            var token = $"{user.UserId}.{exp}.{sig}";
-
-            return ServiceResult<OtpVerifiedResult>.Ok(new OtpVerifiedResult(token));
-        }
-
-        // -------------------- NEW: STEP-3 RESET by otpToken --------------------
-        public async Task<ServiceResult<EmptyResult>> ResetPasswordWithOtpTokenAsync(OtpChangePasswordByTokenRequest req, CancellationToken ct = default)
-        {
-            if (req is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu dữ liệu đầu vào.");
-            if (string.IsNullOrWhiteSpace(req.OtpToken))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu otpToken.");
-            if (string.IsNullOrWhiteSpace(req.NewPassword))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu mật khẩu mới.");
-            if (string.IsNullOrWhiteSpace(req.ConfirmNewPassword))
-                return ServiceResult<EmptyResult>.Fail(AuthError.MissingInput, "Thiếu mật khẩu xác nhận.");
-            if (req.NewPassword.Length < 6)
-                return ServiceResult<EmptyResult>.Fail(AuthError.WeakPassword, "Mật khẩu mới phải ≥ 6 ký tự.");
-            if (req.NewPassword != req.ConfirmNewPassword)
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidCredential, "Mật khẩu mới và xác nhận không khớp.");
-
-            // Parse token: userId.exp.sig
-            var parts = req.OtpToken.Split('.', 3);
-            if (parts.Length != 3)
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidToken, "otpToken không hợp lệ.");
-            if (!int.TryParse(parts[0], out var userId))
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidToken, "otpToken không hợp lệ.");
-            if (!long.TryParse(parts[1], out var exp))
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidToken, "otpToken không hợp lệ.");
-
-            if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() > exp)
-                return ServiceResult<EmptyResult>.Fail(AuthError.Expired, "otpToken đã hết hạn.");
-
-            var expected = Sign($"{userId}.{exp}");
-            if (!CryptographicEquals(expected, parts[2]))
-                return ServiceResult<EmptyResult>.Fail(AuthError.InvalidToken, "otpToken không hợp lệ.");
-
-            var user = await _repo.FindByIdAsync(userId, ct);
-            if (user is null)
-                return ServiceResult<EmptyResult>.Fail(AuthError.NotFound, "Không tìm thấy người dùng.");
-
-            var same = _hasher.Verify(req.NewPassword, user.PasswordSalt, user.PasswordHash, out _);
-            if (same)
-                return ServiceResult<EmptyResult>.Fail(AuthError.WeakPassword, "Mật khẩu mới không được trùng mật khẩu cũ.");
-
-            var (hash, salt) = _hasher.CreateHash(req.NewPassword);
-            user.PasswordHash = hash;
-            user.PasswordSalt = salt;
-            await _repo.UpdateUserAsync(user, ct);
-
-            TrySendChangedEmail(user);
-            return ServiceResult<EmptyResult>.Ok(new EmptyResult());
-        }
-
-        // ====================== Helpers ======================
-        private System.Net.Mail.SmtpClient BuildSmtpClient() => new()
-        {
-            Host = _config["Smtp:Host"]!,
-            Port = int.Parse(_config["Smtp:Port"]!),
-            EnableSsl = bool.Parse(_config["Smtp:EnableSsl"]!),
-            Credentials = new System.Net.NetworkCredential(_config["Smtp:User"], _config["Smtp:Password"])
-        };
-
-        private void TrySendChangedEmail(User user)
+        // ===================== LOGIN/LOGOUT =====================
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginRequest req, CancellationToken ct = default)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(user.Email)) return;
-                var whenVn = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, _tzVN);
-                using var client = BuildSmtpClient();
-                var mail = new System.Net.Mail.MailMessage
+                var rs = await _svc.ValidateLoginAsync(req, ct);
+                if (!rs.Success) return MapError(rs.Error, rs.Message, defaultField: "usernameOrPassword");
+
+                var user = rs.Data!.User;
+                var claims = new List<Claim>
                 {
-                    From = new System.Net.Mail.MailAddress(_config["Smtp:User"]!, "BookMyDoctor System"),
-                    Subject = "Xác nhận thay đổi mật khẩu",
-                    IsBodyHtml = true,
-                    Body = $"<p>Xin chào {System.Net.WebUtility.HtmlEncode(user.Username)},</p>" +
-                           $"<p>Mật khẩu của bạn đã được cập nhật lúc <b>{whenVn:HH:mm:ss dd/MM/yyyy} (GMT+7)</b>.</p>"
+                    new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                    new(ClaimTypes.Name, user.Username ?? string.Empty),
+                    new(ClaimTypes.Role, $"{user.RoleId}")
                 };
-                mail.To.Add(user.Email);
-                client.Send(mail);
+                var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal,
+                    new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
+                        AllowRefresh = true
+                    });
+
+                return Ok(new { message = "Đăng nhập thành công!" });
             }
-            catch { /* ignore */ }
+            catch (Exception ex) { return MapException(ex); }
         }
 
-        // HMAC SHA256 ký token ngắn hạn
-        private string Sign(string data)
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
         {
-            var secret = _config["Otp:Secret"];
-            if (string.IsNullOrEmpty(secret))
-                throw new InvalidOperationException("Thiếu cấu hình Otp:Secret.");
-
-            using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
-            var bytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
-            return Base64UrlEncode(bytes);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return NoContent();
         }
 
-        private static bool CryptographicEquals(string a, string b)
+        // ===================== CHANGE PASSWORD (AUTHED) =====================
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest req, CancellationToken ct = default)
         {
-            var ba = Encoding.UTF8.GetBytes(a);
-            var bb = Encoding.UTF8.GetBytes(b);
-            if (ba.Length != bb.Length) return false;
-            var diff = 0;
-            for (int i = 0; i < ba.Length; i++) diff |= ba[i] ^ bb[i];
-            return diff == 0;
+            try
+            {
+                var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0";
+                if (!int.TryParse(userIdStr, out var userId))
+                    return SimpleError("auth", "Không xác định được người dùng.", 401);
+
+                if (string.IsNullOrWhiteSpace(req.NewPassword) || string.IsNullOrWhiteSpace(req.ConfirmNewPassword))
+                    return SimpleError("newPassword", "Thiếu mật khẩu mới.", 400);
+
+                if (req.NewPassword != req.ConfirmNewPassword)
+                    return SimpleError("confirmNewPassword", "Mật khẩu xác nhận không khớp.", 400);
+
+                var rs = await _svc.ChangePasswordAsync(userId, req, ct);
+                if (!rs.Success) return MapError(rs.Error, rs.Message, defaultField: "currentPassword");
+
+                return NoContent();
+            }
+            catch (Exception ex) { return MapException(ex); }
         }
 
-        private static string Base64UrlEncode(byte[] bytes)
+        // ===================== OTP FLOW (TÁCH BƯỚC) =====================
+        // B1: request-otp  → gửi mã
+        [HttpPost("request-otp")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RequestOtp([FromBody] OtpRequest req, CancellationToken ct = default)
         {
-            return Convert.ToBase64String(bytes)
-                .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            try
+            {
+                var rs = await _svc.SendOtpAsync(req, ct);
+                if (!rs.Success) return MapError(rs.Error, rs.Message, defaultField: "destination");
+                return Ok(new { message = "Mã OTP đã được gửi." });
+            }
+            catch (Exception ex) { return MapException(ex); }
         }
+
+        // B2: verify-otp  → xác thực mã, lưu otp_token vào HttpOnly cookie (FE không phải nhập)
+        [HttpPost("verify-otp")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpOnlyRequest req, CancellationToken ct = default)
+        {
+            try
+            {
+                var rs = await _svc.VerifyOtpAsync(req, ct);
+                if (!rs.Success) return MapError(rs.Error, rs.Message, defaultField: "otpCode");
+
+                var token = rs.Data!.OtpToken;
+
+                // Nếu đang test qua HTTP (không HTTPS), cookie Secure=true sẽ không set được.
+                // Dùng Request.IsHttps để tự động phù hợp môi trường dev/prod.
+                Response.Cookies.Append("otp_token", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = Request.IsHttps,                 // true trên HTTPS, false khi dev HTTP
+                    SameSite = SameSiteMode.Strict,          // đổi sang Lax/None nếu cần cross-site
+                    Expires = DateTimeOffset.UtcNow.AddMinutes(10),
+                    IsEssential = true
+                });
+
+                return Ok(new { message = "Xác thực OTP thành công." });
+            }
+            catch (Exception ex) { return MapException(ex); }
+        }
+
+        // B3: change-password-otp  → BE tự đọc otpToken từ cookie nếu body không có
+        [HttpPost("change-password-otp")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangePasswordByOtp([FromBody] ChangePasswordByTokenRequest req, CancellationToken ct = default)
+        {
+            try
+            {
+                // Fallback: tự lấy từ cookie để người dùng KHÔNG phải nhập
+                if (string.IsNullOrWhiteSpace(req.OtpToken))
+                {
+                    if (Request.Cookies.TryGetValue("otp_token", out var cookieToken) && !string.IsNullOrWhiteSpace(cookieToken))
+                        req.OtpToken = cookieToken;
+                    else
+                        return SimpleError("otpToken", "Thiếu otpToken. Vui lòng xác thực OTP lại.", 400);
+                }
+
+                if (string.IsNullOrWhiteSpace(req.NewPassword) || string.IsNullOrWhiteSpace(req.ConfirmNewPassword))
+                    return SimpleError("newPassword", "Thiếu mật khẩu mới.", 400);
+
+                if (req.NewPassword != req.ConfirmNewPassword)
+                    return SimpleError("confirmNewPassword", "Mật khẩu xác nhận không khớp.", 400);
+
+                var rs = await _svc.ResetPasswordWithOtpTokenAsync(new OtpChangePasswordByTokenRequest
+                {
+                    OtpToken = req.OtpToken!,
+                    NewPassword = req.NewPassword,
+                    ConfirmNewPassword = req.ConfirmNewPassword
+                }, ct);
+
+                if (!rs.Success) return MapError(rs.Error, rs.Message, defaultField: "otpToken");
+
+                // Xóa cookie sau khi dùng xong
+                Response.Cookies.Delete("otp_token");
+
+                return Ok(new { message = "Đổi mật khẩu thành công." });
+            }
+            catch (Exception ex) { return MapException(ex); }
+        }
+
+        // ===================== Utils =====================
+        [HttpGet("unauthorized")]
+        [AllowAnonymous]
+        public IActionResult UnauthorizedEndpoint()
+            => SimpleError("auth", "Bạn chưa đăng nhập hoặc phiên đã hết hạn.", 401);
+
+        [HttpGet("check-role")]
+        [Authorize]
+        public IActionResult CheckRole()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var username = User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+            var roleClaim = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+
+            string roleId = roleClaim.StartsWith("R", StringComparison.OrdinalIgnoreCase)
+                ? roleClaim.ToUpperInvariant()
+                : (int.TryParse(roleClaim, out var rid) ? $"R{rid:00}" : roleClaim);
+
+            string roleName = roleId switch
+            {
+                "R01" => "Admin",
+                "R02" => "Doctor",
+                "R03" => "Patient",
+                _ => "Unknown"
+            };
+
+            return Ok(new { userId, username, roleId, roleName });
+        }
+    }
+
+    // ====== REQUEST MODELS PHỤ CHO FLOW OTP (đặt ngay dưới controller) ======
+    public sealed class VerifyOtpOnlyRequest
+    {
+        public string Destination { get; set; } = default!; // email
+        public string OtpCode { get; set; } = default!;     // 6 digits
+        public string Purpose { get; set; } = "RESET_PASSWORD";
+        public string Channel { get; set; } = "EMAIL";
+    }
+
+    // OtpToken trở thành OPTIONAL với FE (BE sẽ tự lấy từ cookie nếu không gửi)
+    public sealed class ChangePasswordByTokenRequest
+    {
+        public string? OtpToken { get; set; }
+        public string NewPassword { get; set; } = default!;
+        public string ConfirmNewPassword { get; set; } = default!;
     }
 }

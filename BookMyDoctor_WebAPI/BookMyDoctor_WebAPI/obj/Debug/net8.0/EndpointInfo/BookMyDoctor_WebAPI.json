@@ -184,18 +184,6 @@
         }
       }
     },
-    "/api/Auth/me": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Auth/check-role": {
       "get": {
         "tags": [

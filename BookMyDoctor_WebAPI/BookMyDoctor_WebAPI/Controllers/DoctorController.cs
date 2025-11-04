@@ -10,7 +10,7 @@ namespace BookMyDoctor_WebAPI.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IDoctorService _service;
-        private readonly ILogger<DoctorsController> _logger; // match the injected generic type
+        private readonly ILogger<DoctorsController> _logger;
 
         public DoctorsController(IDoctorService service, ILogger<DoctorsController> logger)
         {
@@ -29,8 +29,14 @@ namespace BookMyDoctor_WebAPI.Controllers
         [Authorize]
         public async Task<IActionResult> GetById([FromQuery] int id, CancellationToken ct)
         {
+            if (id <= 0)
+                return BadRequest(new { message = "Tham số id không hợp lệ." });
+
             var result = await _service.GetDoctorByIdAsync(id, ct);
-            return result is null ? NotFound() : Ok(result);
+            if (result is null)
+                return NotFound(new { message = $"Không tìm thấy bác sĩ với mã id = {id}." });
+
+            return Ok(result);
         }
 
         [HttpGet("Search-Doctors")]
@@ -52,14 +58,19 @@ namespace BookMyDoctor_WebAPI.Controllers
                     name, department, gender, phone, dateOnly, ct);
 
                 if (doctors == null || !doctors.Any())
-                    return NotFound("No doctors found matching the criteria.");
+                    return NotFound(new { message = "Không tìm thấy bác sĩ phù hợp với tiêu chí tìm kiếm." });
 
                 return Ok(doctors);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while searching doctors");
-                return StatusCode(500, "An error occurred while processing your request.");
+                _logger.LogError(ex, "Lỗi khi tìm kiếm bác sĩ - TraceId: {TraceId}", HttpContext.TraceIdentifier);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    message = "Đã xảy ra lỗi phía máy chủ khi xử lý yêu cầu.",
+                    traceId = HttpContext.TraceIdentifier
+                });
             }
         }
 
@@ -67,8 +78,15 @@ namespace BookMyDoctor_WebAPI.Controllers
         [Authorize(Roles = "R01")]
         public async Task<IActionResult> Delete([FromQuery] int id, CancellationToken ct)
         {
+            if (id <= 0)
+                return BadRequest(new { message = "Tham số id không hợp lệ." });
+
             var success = await _service.DeleteDoctorAsync(id, ct);
-            return success ? NoContent() : NotFound();
+
+            if (!success)
+                return NotFound(new { message = $"Không tìm thấy bác sĩ để xóa (id = {id})." });
+
+            return Ok(new { message = "Xóa bác sĩ thành công." });
         }
     }
 }

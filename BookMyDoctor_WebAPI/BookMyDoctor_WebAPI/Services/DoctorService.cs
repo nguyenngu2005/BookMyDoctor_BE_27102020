@@ -91,14 +91,11 @@ namespace BookMyDoctor_WebAPI.Services
             if (workDate.HasValue)
             {
                 var date = workDate.Value;
-                // Chỉ lấy bác sĩ có lịch làm việc đúng ngày đó
                 query = query.Where(d =>
                     _db.Schedules.Any(s => s.DoctorId == d.DoctorId && s.WorkDate == date));
             }
 
-            return await query
-                .OrderBy(d => d.Name)
-                .ToListAsync(ct);
+            return await query.OrderBy(d => d.Name).ToListAsync(ct);
         }
 
         public async Task<Doctor> AddDoctorAsync(
@@ -109,24 +106,21 @@ namespace BookMyDoctor_WebAPI.Services
             CancellationToken ct = default)
         {
             await _db.Doctors.AddAsync(doctor, ct);
-            await _db.SaveChangesAsync(ct); // cần để lấy DoctorId
+            await _db.SaveChangesAsync(ct); // lấy DoctorId
 
-            // Tạo lịch mặc định (nếu có yêu cầu)
             if (defaultDays != null && defaultDays.Any())
             {
                 var start = defaultStart ?? new TimeOnly(8, 0);
                 var end = defaultEnd ?? new TimeOnly(17, 0);
-
                 var daySet = new HashSet<DayOfWeek>(defaultDays);
 
                 var today = DateOnly.FromDateTime(DateTime.Today);
-                var until = today.AddDays(30); // 30 ngày tới
+                var until = today.AddDays(30);
 
                 var schedules = new List<Schedule>();
                 for (var d = today; d <= until; d = d.AddDays(1))
                 {
-                    if (!daySet.Contains(d.ToDateTime(TimeOnly.MinValue).DayOfWeek))
-                        continue;
+                    if (!daySet.Contains(d.ToDateTime(TimeOnly.MinValue).DayOfWeek)) continue;
 
                     schedules.Add(new Schedule
                     {
@@ -151,11 +145,43 @@ namespace BookMyDoctor_WebAPI.Services
 
         public async Task<bool> DeleteDoctorAsync(int doctorId, CancellationToken ct = default)
         {
-            var existing = await _db.Doctors.FirstOrDefaultAsync(d => d.DoctorId == doctorId, ct);
-            if (existing == null) return false;
+            // Dùng transaction để đảm bảo tính toàn vẹn
+            await using var tx = await _db.Database.BeginTransactionAsync(ct);
 
-            _db.Doctors.Remove(existing);
+            // Lấy Doctor có tracking để biết UserId
+            var doctor = await _db.Doctors
+                .AsTracking()
+                .FirstOrDefaultAsync(d => d.DoctorId == doctorId, ct);
+
+            if (doctor == null)
+            {
+                return false;
+            }
+
+            // Nếu có UserId, xóa User để DB cascade xóa Doctor
+            if (doctor.UserId != 0) // hoặc doctor.UserId.HasValue nếu kiểu nullable
+            {
+                var user = await _db.Users
+                    .FirstOrDefaultAsync(u => u.UserId == doctor.UserId, ct);
+
+                if (user != null)
+                {
+                    _db.Users.Remove(user);
+                }
+                else
+                {
+                    // Không tìm thấy User tương ứng, xóa trực tiếp Doctor
+                    _db.Doctors.Remove(doctor);
+                }
+            }
+            else
+            {
+                // Doctor không gắn User, xóa trực tiếp
+                _db.Doctors.Remove(doctor);
+            }
+
             await _db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
             return true;
         }
     }

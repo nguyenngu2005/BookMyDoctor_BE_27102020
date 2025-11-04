@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BookMyDoctor_WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+617c4c0fa2f737aef9dec8eea7da416f960a41aa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a6bd09268a7d1522b1fae278879cb10d1b9c2004")]
 [assembly: System.Reflection.AssemblyProductAttribute("BookMyDoctor_WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BookMyDoctor_WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

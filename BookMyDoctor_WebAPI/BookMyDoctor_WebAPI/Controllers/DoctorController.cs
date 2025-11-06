@@ -81,12 +81,15 @@ namespace BookMyDoctor_WebAPI.Controllers
             if (id <= 0)
                 return BadRequest(new { message = "Tham số id không hợp lệ." });
 
-            var success = await _service.DeleteDoctorAsync(id, ct);
-
-            if (!success)
-                return NotFound(new { message = $"Không tìm thấy bác sĩ để xóa (id = {id})." });
-
-            return Ok(new { message = "Xóa bác sĩ thành công." });
+            try
+            {
+                await _service.DeleteDoctorAsync(id, ct);
+                return Ok(new { message = "Xóa bác sĩ thành công." });
+            }
+            catch (AppException ax)
+            {
+                return StatusCode(ax.StatusCode, new { message = ax.Message });
+            }
         }
     }
 }

@@ -145,44 +145,61 @@ namespace BookMyDoctor_WebAPI.Services
 
         public async Task<bool> DeleteDoctorAsync(int doctorId, CancellationToken ct = default)
         {
-            // Dùng transaction để đảm bảo tính toàn vẹn
             await using var tx = await _db.Database.BeginTransactionAsync(ct);
 
-            // Lấy Doctor có tracking để biết UserId
+            // 1) Tồn tại?
             var doctor = await _db.Doctors
                 .AsTracking()
                 .FirstOrDefaultAsync(d => d.DoctorId == doctorId, ct);
 
             if (doctor == null)
-            {
-                return false;
-            }
+                throw new AppException($"Không tìm thấy bác sĩ (id = {doctorId}).", 404);
 
-            // Nếu có UserId, xóa User để DB cascade xóa Doctor
-            if (doctor.UserId != 0) // hoặc doctor.UserId.HasValue nếu kiểu nullable
-            {
-                var user = await _db.Users
-                    .FirstOrDefaultAsync(u => u.UserId == doctor.UserId, ct);
+            // 2) Chặn xóa nếu còn lịch hẹn CHƯA diễn ra / còn trạng thái Scheduled
+            //    (để giữ trải nghiệm FE/BE “ném lỗi” thay vì âm thầm fail)
+            var hasUpcoming = await _db.Appointments
+                .AsNoTracking()
+                .AnyAsync(a =>
+                    a.Status == "Scheduled" &&
+                    _db.Schedules.Any(s => s.ScheduleId == a.ScheduleId
+                                           && s.DoctorId == doctorId
+                                           && s.WorkDate >= DateOnly.FromDateTime(DateTime.Today)),
+                    ct);
 
+            if (hasUpcoming)
+                throw new AppException("Bác sĩ còn lịch hẹn chưa diễn ra. Hủy/di chuyển lịch trước khi xóa.", 409);
+
+            // 3) Xóa tài khoản đăng nhập nếu có (Users là principal; DELETE Users -> CASCADE xóa Doctor)
+            if (doctor.UserId != 0)
+            {
+                var user = await _db.Users.FirstOrDefaultAsync(u => u.UserId == doctor.UserId, ct);
                 if (user != null)
                 {
                     _db.Users.Remove(user);
                 }
                 else
                 {
-                    // Không tìm thấy User tương ứng, xóa trực tiếp Doctor
+                    // Không còn user tương ứng → xóa trực tiếp doctor
                     _db.Doctors.Remove(doctor);
                 }
             }
             else
             {
-                // Doctor không gắn User, xóa trực tiếp
+                // Doctor không gắn user → xóa trực tiếp doctor
                 _db.Doctors.Remove(doctor);
             }
 
-            await _db.SaveChangesAsync(ct);
-            await tx.CommitAsync(ct);
-            return true;
+            try
+            {
+                await _db.SaveChangesAsync(ct);
+                await tx.CommitAsync(ct);
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Ràng buộc FK khác chặn xóa (trường hợp cấu hình cascade chưa đúng)
+                throw new AppException($"Xóa không thành công do ràng buộc dữ liệu: {ex.GetBaseException().Message}", 409);
+            }
         }
     }
 }

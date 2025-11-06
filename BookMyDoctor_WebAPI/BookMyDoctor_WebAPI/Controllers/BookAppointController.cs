@@ -1,95 +1,100 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BookMyDoctor_WebAPI.Models;
+using BookMyDoctor_WebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
-[ApiController]
-[Route("api/booking")]
-public class BookingController : ControllerBase
+namespace BookMyDoctor_WebAPI.Controllers
 {
-    private readonly IBookingService _svc;
-    public BookingController(IBookingService svc) => _svc = svc;
-
-    // Helper trả lỗi theo format FE yêu cầu
-    private IActionResult ErrorResponse(string message, int status = 400)
-        => StatusCode(status, new { message });
-
-    /// 1) Đặt lịch không login
-    [HttpPost("public")]
-    [AllowAnonymous]
-    public async Task<IActionResult> PublicBook([FromBody] PublicBookingRequest req, CancellationToken ct)
+    [ApiController]
+    [Route("api/[controller]")]
+    [Produces("application/json")]
+    public sealed class BookingController : ControllerBase
     {
-        try
-        {
-            var result = await _svc.PublicBookAsync(req, ct);
-            return Ok(result);
-        }
-        catch (AppException ex)
-        {
-            return ErrorResponse(ex.Message, ex.StatusCode);
-        }
-        catch (Exception)
-        {
-            return ErrorResponse("Đã xảy ra lỗi, vui lòng thử lại.");
-        }
-    }
+        private readonly IBookingService _svc;
+        public BookingController(IBookingService svc) => _svc = svc;
 
-    /// 2) Đặt lịch khi login (R03)
-    [HttpPost("private")]
-    [Authorize(Roles = "R03")]
-    public async Task<IActionResult> PrivateBook([FromBody] PrivateBookingRequest req, CancellationToken ct)
-    {
-        try
-        {
-            var result = await _svc.PrivateBookAsync(User, req, ct);
-            return Ok(result);
-        }
-        catch (ForbiddenException ex)
-        {
-            return ErrorResponse(ex.Message, 403);
-        }
-        catch (AppException ex)
-        {
-            return ErrorResponse(ex.Message, ex.StatusCode);
-        }
-        catch (Exception)
-        {
-            return ErrorResponse("Đã xảy ra lỗi, vui lòng thử lại.");
-        }
-    }
+        // Luôn trả 200 + message khi lỗi
+        private IActionResult OkError(string msg) => Ok(new { message = msg });
 
-    [HttpGet("info_slot_busy")]
-    [AllowAnonymous]
-    public async Task<IActionResult> GetBusySlots(
-        [FromQuery] int doctorId,
-        [FromQuery] DateTime date,
-        CancellationToken ct)
-    {
-        try
+        // ===== 1) BOOK PUBLIC =====
+        [HttpPost("public")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(BookingResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> PublicBook([FromBody] PublicBookingRequest req, CancellationToken ct)
         {
-            if (doctorId <= 0)
-                return ErrorResponse("doctorId is required and must be > 0");
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join("; ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => string.IsNullOrWhiteSpace(e.ErrorMessage) ? e.Exception?.Message : e.ErrorMessage)
+                    .Where(m => !string.IsNullOrWhiteSpace(m)));
 
-            var busySlots = await _svc.GetBusySlotsAsync(doctorId, date, ct);
-            return Ok(busySlots ?? Enumerable.Empty<BusySlot>());
-        }
-        catch
-        {
-            return ErrorResponse("Không thể tải dữ liệu lịch hẹn.");
-        }
-    }
+                return OkError(string.IsNullOrWhiteSpace(errors) ? "Invalid request." : errors);
+            }
 
-    [HttpDelete("cancel/{bookingId}")]
-    public async Task<IActionResult> CancelBooking(
-        [FromRoute] int bookingId,
-        CancellationToken ct)
-    {
-        try
-        {
-            var result = await _svc.DeleteAppointmentAsync(bookingId, ct);
-            return result ? NoContent() : ErrorResponse("Không tìm thấy lịch hẹn.", 404);
+            try
+            {
+                // Lấy userId nếu có login (không login = null)
+                int? currentUserId = null;
+                if (User?.Identity?.IsAuthenticated == true)
+                {
+                    var idStr = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                               ?? User.FindFirstValue("uid")
+                               ?? User.FindFirstValue("sub");
+                    if (int.TryParse(idStr, out var uid)) currentUserId = uid;
+                }
+
+                // Gọi unified flow
+                var result = await _svc.BookAsync(req, currentUserId, ct);
+                return Ok(result);
+            }
+            catch (DbUpdateException)
+            {
+                return OkError("Khung giờ này vừa có người đặt. Vui lòng chọn giờ khác.");
+            }
+            catch (Exception ex)
+            {
+                return OkError(ex.Message);
+            }
         }
-        catch
+
+        // ===== 2) SLOT BẬN =====
+        [HttpGet("info_slot_busy")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(IEnumerable<BusySlot>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetBusySlots([FromQuery] int doctorId, [FromQuery] string date, CancellationToken ct)
         {
-            return ErrorResponse("Không thể huỷ lịch hẹn.");
+            try
+            {
+                if (doctorId <= 0) return OkError("doctorId is required and must be > 0");
+                if (!DateOnly.TryParse(date, out var d)) return OkError("date must be yyyy-MM-dd");
+
+                var busy = await _svc.GetBusySlotsAsync(doctorId, d.ToDateTime(TimeOnly.MinValue), ct);
+                return Ok(busy);
+            }
+            catch (Exception ex)
+            {
+                return OkError(ex.Message);
+            }
+        }
+
+        // ===== 3) CANCEL APPOINTMENT =====
+        [HttpDelete("cancel/{bookingId:int}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CancelBooking([FromRoute] int bookingId, CancellationToken ct)
+        {
+            try
+            {
+                var ok = await _svc.DeleteAppointmentAsync(bookingId, ct);
+                return ok ? Ok(new { message = "Cancelled." }) : OkError("Không tìm thấy lịch hẹn.");
+            }
+            catch (Exception ex)
+            {
+                return OkError(ex.Message);
+            }
         }
     }
 }

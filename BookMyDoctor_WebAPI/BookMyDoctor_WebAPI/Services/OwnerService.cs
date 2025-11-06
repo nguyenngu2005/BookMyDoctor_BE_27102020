@@ -83,7 +83,7 @@ namespace BookMyDoctor_WebAPI.Services
             };
             var defaultStart = new TimeOnly(8, 0);
             var defaultEnd = new TimeOnly(17, 0);
-            var weeksToGenerate = 4;
+            var weeksToGenerate = 1;
             var today = DateTime.Today;
             var schedules = new List<Schedule>();
 

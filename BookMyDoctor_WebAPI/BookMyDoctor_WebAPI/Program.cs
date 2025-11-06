@@ -1,21 +1,22 @@
 ﻿// Program.cs (.NET 8)
 using BookMyDoctor_WebAPI.Data;
 using BookMyDoctor_WebAPI.Data.Repositories;
+using BookMyDoctor_WebAPI.Helpers;
+using BookMyDoctor_WebAPI.Repositories;
 // ===== CHÚ Ý NAMESPACE REPOSITORY =====
 using BookMyDoctor_WebAPI.Services;               // <-- cần để thấy PasswordHasherAdapter
 using BookMyDoctor_WebAPI.Services.Register;
-using BookMyDoctor_WebAPI.Helpers;
 // using BookMyDoctor_WebAPI.Data.Repositories;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using static BookMyDoctor_WebAPI.Data.Repositories.AuthRepository;
-using BookMyDoctor_WebAPI.Repositories;
 using ProfileRepository = BookMyDoctor_WebAPI.Data.Repositories.ProfileRepository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -147,6 +148,10 @@ builder.Services.AddControllers()
     {
         o.JsonSerializerOptions.PropertyNamingPolicy = null;
     });
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 // ================= Swagger =================
 builder.Services.AddEndpointsApiExplorer();

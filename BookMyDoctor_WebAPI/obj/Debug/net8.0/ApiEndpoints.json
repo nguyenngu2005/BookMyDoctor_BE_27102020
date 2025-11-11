@@ -185,6 +185,32 @@
     ]
   },
   {
+    "ContainingType": "BookMyDoctor_WebAPI.Controllers.ChatController",
+    "Method": "Post",
+    "RelativePath": "api/Chat",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "BookMyDoctor_WebAPI.RequestModel.Chat.ChatRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BookMyDoctor_WebAPI.Controllers.ChatController",
+    "Method": "Ping",
+    "RelativePath": "api/Chat/ping",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.DoctorsController",
     "Method": "GetAll",
     "RelativePath": "api/Doctors/All-Doctors",
@@ -199,22 +225,6 @@
     "Method": "Delete",
     "RelativePath": "api/Doctors/DeleteDoctor",
     "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BookMyDoctor_WebAPI.Controllers.DoctorsController",
-    "Method": "GetById",
-    "RelativePath": "api/Doctors/Get-A-Doctor",
-    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -300,31 +310,40 @@
         "Name": "status",
         "Type": "System.String",
         "IsRequired": false
+      },
+      {
+        "Name": "doctorId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
+      }
+    ]
   },
   {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
     "Method": "DeletePatient",
     "RelativePath": "api/Patients/DeletePatient",
     "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
-    "Method": "GetPatientDetail",
-    "RelativePath": "api/Patients/DetailPatient",
-    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [

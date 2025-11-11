@@ -5,6 +5,7 @@ using BookMyDoctor_WebAPI.Helpers;
 using BookMyDoctor_WebAPI.Repositories;
 // ===== CHÚ Ý NAMESPACE REPOSITORY =====
 using BookMyDoctor_WebAPI.Services;               // <-- cần để thấy PasswordHasherAdapter
+using BookMyDoctor_WebAPI.Services.Chat;
 using BookMyDoctor_WebAPI.Services.Register;
 // using BookMyDoctor_WebAPI.Data.Repositories;
 using Hangfire;
@@ -43,7 +44,13 @@ builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+//============== AI Chatbox =========================
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("GoogleAi"));
+builder.Services.Configure<BackendOptions>(builder.Configuration.GetSection("Backend"));
 
+builder.Services.AddHttpClient<IGeminiClient, GeminiClient>();
+builder.Services.AddHttpClient<IBookingBackend, BookingBackend>();
+builder.Services.AddScoped<IChatService, ChatService>();
 // ============= !!! QUAN TRỌNG: Hasher DI =============
 // ❌ BỎ dòng cũ vì PasswordHasher là static helper, không inject được:
 // builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();

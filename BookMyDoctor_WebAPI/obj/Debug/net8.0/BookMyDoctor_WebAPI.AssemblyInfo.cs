@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("b806244e-ce73-4364-80bf-6bf96f86d54f")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("BookMyDoctor_WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c04e44e0046403fa8ce757b43b694994bbad509")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dfc8eb6a5d2c472e0d6197c2c5a515db16067b4d")]
 [assembly: System.Reflection.AssemblyProductAttribute("BookMyDoctor_WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BookMyDoctor_WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

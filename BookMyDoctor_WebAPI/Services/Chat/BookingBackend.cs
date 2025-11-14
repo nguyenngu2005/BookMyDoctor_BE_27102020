@@ -5,17 +5,33 @@ using System.Text.Json;
 
 namespace BookMyDoctor_WebAPI.Services.Chat
 {
+    // Dùng đúng model hiện tại của BookingController/BookingService
     public interface IBookingBackend
     {
-        Task<IReadOnlyList<DoctorDto>> SearchDoctorsAsync(string? name, string? department, string? gender, string? phone, DateTimeOffset? workDate, CancellationToken ct);
-        Task<IReadOnlyList<BusySlotDto>> GetBusySlotsAsync(int doctorId, DateOnly date, CancellationToken ct);
-        Task<BookingResultDto> CreatePublicAsync(PublicBookingRequestDto payload, CancellationToken ct);
+        Task<IReadOnlyList<DoctorDto>> SearchDoctorsAsync(
+            string? name,
+            string? department,
+            string? gender,
+            string? phone,
+            DateTimeOffset? workDate,
+            CancellationToken ct);
+
+        Task<IReadOnlyList<BusySlot>> GetBusySlotsAsync(
+            int doctorId,
+            DateOnly date,
+            CancellationToken ct);
+
+        Task<BookingResult> CreatePublicAsync(
+            PublicBookingRequest payload,
+            CancellationToken ct);
+
         Task<bool> CancelAsync(int bookingId, CancellationToken ct);
     }
 
     public class BackendOptions
     {
-        public string BaseUrl { get; set; } = "http://localhost:7243";
+        // bạn có thể override trong appsettings thành https://localhost:7243
+        public string BaseUrl { get; set; } = "https://localhost:7243";
     }
 
     public class BookingBackend : IBookingBackend
@@ -23,76 +39,128 @@ namespace BookMyDoctor_WebAPI.Services.Chat
         private readonly HttpClient _http;
         private readonly ILogger<BookingBackend> _logger;
 
-        public BookingBackend(HttpClient http, IOptions<BackendOptions> opt, ILogger<BookingBackend> logger)
+        public BookingBackend(
+            HttpClient http,
+            IOptions<BackendOptions> opt,
+            ILogger<BookingBackend> logger)
         {
             _http = http;
             _logger = logger;
 
-            var baseUrl = (opt.Value.BaseUrl ?? "http://localhost:7243").TrimEnd('/');
+            var baseUrl = (opt.Value.BaseUrl ?? "https://localhost:7243").TrimEnd('/');
             _http.BaseAddress = new Uri(baseUrl);
-            if (_http.Timeout == default) _http.Timeout = TimeSpan.FromSeconds(20);
+
+            if (_http.Timeout == default)
+                _http.Timeout = TimeSpan.FromSeconds(20);
         }
 
-        public async Task<IReadOnlyList<DoctorDto>> SearchDoctorsAsync(string? name, string? department, string? gender, string? phone, DateTimeOffset? workDate, CancellationToken ct)
+        // ===================== Doctors/Search-Doctors =====================
+        public async Task<IReadOnlyList<DoctorDto>> SearchDoctorsAsync(
+            string? name,
+            string? department,
+            string? gender,
+            string? phone,
+            DateTimeOffset? workDate,
+            CancellationToken ct)
         {
-            var path = "api/Doctors/Search-Doctors";
+            const string path = "api/Doctors/Search-Doctors";
             var q = new List<string>();
 
-            if (!string.IsNullOrWhiteSpace(name)) q.Add("name=" + Uri.EscapeDataString(name));
-            if (!string.IsNullOrWhiteSpace(department)) q.Add("department=" + Uri.EscapeDataString(department));
-            if (!string.IsNullOrWhiteSpace(gender)) q.Add("gender=" + Uri.EscapeDataString(gender));
-            if (!string.IsNullOrWhiteSpace(phone)) q.Add("phone=" + Uri.EscapeDataString(phone));
-            if (workDate.HasValue) q.Add("workDate=" + workDate.Value.ToString("yyyy-MM-dd"));
+            if (!string.IsNullOrWhiteSpace(name))
+                q.Add("name=" + Uri.EscapeDataString(name));
+            if (!string.IsNullOrWhiteSpace(department))
+                q.Add("department=" + Uri.EscapeDataString(department));
+            if (!string.IsNullOrWhiteSpace(gender))
+                q.Add("gender=" + Uri.EscapeDataString(gender));
+            if (!string.IsNullOrWhiteSpace(phone))
+                q.Add("phone=" + Uri.EscapeDataString(phone));
+            if (workDate.HasValue)
+                q.Add("workDate=" + workDate.Value.ToString("yyyy-MM-dd"));
 
             var url = q.Count > 0 ? $"{path}?{string.Join("&", q)}" : path;
 
             var res = await _http.GetAsync(url, ct);
             var body = await res.Content.ReadAsStringAsync(ct);
-            if (!res.IsSuccessStatusCode)
-                throw new HttpRequestException($"Backend GET {url} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
 
-            var data = JsonSerializer.Deserialize<List<DoctorDto>>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+            if (!res.IsSuccessStatusCode)
+                throw new HttpRequestException(
+                    $"Backend GET {url} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var data = JsonSerializer.Deserialize<List<DoctorDto>>(body, options)
                        ?? new List<DoctorDto>();
 
             return data;
         }
 
-        public async Task<IReadOnlyList<BusySlotDto>> GetBusySlotsAsync(int doctorId, DateOnly date, CancellationToken ct)
+        // ===================== Booking/info_slot_busy =====================
+        public async Task<IReadOnlyList<BusySlot>> GetBusySlotsAsync(
+            int doctorId,
+            DateOnly date,
+            CancellationToken ct)
         {
             var path = $"api/Booking/info_slot_busy?doctorId={doctorId}&date={date:yyyy-MM-dd}";
 
             var res = await _http.GetAsync(path, ct);
             var body = await res.Content.ReadAsStringAsync(ct);
-            if (!res.IsSuccessStatusCode)
-                throw new HttpRequestException($"Backend GET {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
 
-            var data = JsonSerializer.Deserialize<List<BusySlotDto>>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
-                       ?? new List<BusySlotDto>();
+            if (!res.IsSuccessStatusCode)
+                throw new HttpRequestException(
+                    $"Backend GET {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var data = JsonSerializer.Deserialize<List<BusySlot>>(body, options)
+                       ?? new List<BusySlot>();
 
             return data;
         }
 
-        public async Task<BookingResultDto> CreatePublicAsync(PublicBookingRequestDto payload, CancellationToken ct)
+        // ===================== Booking/public =====================
+        public async Task<BookingResult> CreatePublicAsync(
+            PublicBookingRequest payload,
+            CancellationToken ct)
         {
-            var path = "api/Booking/public";
+            const string path = "api/Booking/public";
+
+            _logger.LogInformation("POST {Path} with payload {@Payload}", path, payload);
 
             var res = await _http.PostAsJsonAsync(path, payload, ct);
             var body = await res.Content.ReadAsStringAsync(ct);
-            if (!res.IsSuccessStatusCode)
-                throw new HttpRequestException($"Backend POST {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
 
-            return JsonSerializer.Deserialize<BookingResultDto>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+            _logger.LogInformation("Response {StatusCode} body: {Body}", res.StatusCode, body);
+
+            if (!res.IsSuccessStatusCode)
+                throw new HttpRequestException(
+                    $"Backend POST {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            return JsonSerializer.Deserialize<BookingResult>(body, options)
                    ?? throw new InvalidOperationException("Empty booking result");
         }
 
+        // ===================== Booking/cancel/{id} =====================
         public async Task<bool> CancelAsync(int bookingId, CancellationToken ct)
         {
             var path = $"api/Booking/cancel/{bookingId}";
 
             var res = await _http.DeleteAsync(path, ct);
             var body = await res.Content.ReadAsStringAsync(ct);
+
             if (!res.IsSuccessStatusCode)
-                throw new HttpRequestException($"Backend DELETE {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
+                throw new HttpRequestException(
+                    $"Backend DELETE {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
 
             return true;
         }

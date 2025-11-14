@@ -133,6 +133,7 @@ namespace BookMyDoctor_WebAPI.Controllers
         }
 
         // B2: verify-otp  → xác thực mã, lưu otp_token vào HttpOnly cookie (FE không phải nhập)
+        // B2: verify-otp
         [HttpPost("verify-otp")]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpOnlyRequest req, CancellationToken ct = default)
@@ -144,18 +145,17 @@ namespace BookMyDoctor_WebAPI.Controllers
 
                 var token = rs.Data!.OtpToken;
 
-                // Nếu đang test qua HTTP (không HTTPS), cookie Secure=true sẽ không set được.
-                // Dùng Request.IsHttps để tự động phù hợp môi trường dev/prod.
+                // ⚠️ Cross-site: phải None + Secure = true
                 Response.Cookies.Append("otp_token", token, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = Request.IsHttps,                 // true trên HTTPS, false khi dev HTTP
-                    SameSite = SameSiteMode.Strict,          // đổi sang Lax/None nếu cần cross-site
+                    Secure = true,                 // bắt buộc nếu SameSite=None
+                    SameSite = SameSiteMode.None,  // cho phép cross-site
                     Expires = DateTimeOffset.UtcNow.AddMinutes(10),
                     IsEssential = true
                 });
-
-                return Ok(new { message = "Xác thực OTP thành công." });
+                // ✅ Trả kèm token để FE có thể gửi trong body ở bước 3
+                return Ok(new { message = "Xác thực OTP thành công.", otpToken = token });
             }
             catch (Exception ex) { return MapException(ex); }
         }

@@ -1,4 +1,5 @@
-﻿using BookMyDoctor_WebAPI.Services;
+﻿using BookMyDoctor_WebAPI.RequestModel;
+using BookMyDoctor_WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,17 +19,22 @@ namespace BookMyDoctor_WebAPI.Controllers
             _logger = logger;
         }
 
-        // Get all doctor schedules
+        // ===========================================
+        // 1) Lấy tất cả lịch của tất cả bác sĩ
+        // ===========================================
         [HttpGet("List_All_Schedules_Doctors")]
         public async Task<IActionResult> GetAllSchedules(CancellationToken ct = default)
         {
             var schedules = await _scheduleService.GetAllDoctorSchedulesAsync(ct);
             if (!schedules.Any())
-                return NotFound("Không có lịch làm việc nào được tìm thấy.");
+                return NotFound(new { message = "Không có lịch làm việc nào được tìm thấy." });
+
             return Ok(schedules);
         }
 
-        // Lấy danh sách lịch làm việc của bác sĩ (có thể lọc theo ngày/ tên)
+        // ===========================================
+        // 2) Lấy lịch theo tên bác sĩ hoặc theo ngày
+        // ===========================================
         [HttpGet("List_Schedules_1_Doctor")]
         public async Task<IActionResult> GetSchedules(
             [FromQuery] string? doctorName = null,
@@ -39,101 +45,144 @@ namespace BookMyDoctor_WebAPI.Controllers
             return Ok(schedules);
         }
 
-
-        // Thêm mới lịch làm việc cho bác sĩ
+        // ===========================================
+        // 3) Thêm lịch mới (DÙNG DTO)
+        // ===========================================
         [HttpPost("Add_Schedule_Doctor")]
-        [Authorize (Roles = "R02")]
-        public async Task<IActionResult> AddSchedule([FromBody] Models.Schedule schedule, CancellationToken ct = default)
+        [Authorize(Roles = "R02")]
+        public async Task<IActionResult> AddSchedule([FromBody] AddScheduleRequest? req, CancellationToken ct = default)
         {
             try
             {
+                // 1) Body rỗng / đọc JSON fail
+                if (req is null)
+                {
+                    return BadRequest(new { message = "Dữ liệu gửi lên rỗng hoặc không đúng định dạng JSON." });
+                }
+
+                // 2) Validate model
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => string.IsNullOrWhiteSpace(e.ErrorMessage)
+                                        ? e.Exception?.Message
+                                        : e.ErrorMessage)
+                        .Where(m => !string.IsNullOrWhiteSpace(m));
+
+                    return BadRequest(new { message = string.Join("; ", errors) });
+                }
+
+                var schedule = new Models.Schedule
+                {
+                    DoctorId = req.DoctorId,
+                    WorkDate = req.WorkDate,
+                    StartTime = req.StartTime,
+                    EndTime = req.EndTime,
+                    Status = req.Status,
+                    IsActive = req.IsActive
+                };
+
                 var createdSchedule = await _scheduleService.AddScheduleAsync(schedule, ct);
-                return CreatedAtAction(nameof(GetSchedules), new { id = createdSchedule.ScheduleId }, createdSchedule);
+
+                return CreatedAtAction(nameof(GetSchedules),
+                    new { doctorName = createdSchedule.DoctorId },
+                    createdSchedule);
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentException ex)
             {
                 _logger.LogError(ex, "Invalid input for adding schedule.");
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex, "Error adding schedule: {Message}", ex.Message);
-                return Conflict(ex.Message);
+                return Conflict(new { message = ex.Message });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error adding schedule.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+                return StatusCode(500, new { message = "Lỗi hệ thống. Vui lòng thử lại." });
             }
         }
 
-        // Lay chi tiet lich lam viec theo ID
+
+        // ===========================================
+        // 4) Lấy chi tiết 1 lịch theo ScheduleId
+        // ===========================================
         [HttpGet("Get_Schedule_ById")]
-        //[Authorize(Roles = "R01, R02")]
         public async Task<IActionResult> GetScheduleById([FromQuery] int scheduleId, CancellationToken ct = default)
         {
-            var schedules = await _scheduleService.GetDoctorSchedulesAsync(
-                scheduleId,
-                null,
-                null,
-                ct);
-            if (schedules == null || !schedules.Any())
-            {
-                return NotFound("Schedule not found.");
-            }
-            return Ok(schedules.First());
+            var all = await _scheduleService.GetAllDoctorSchedulesAsync(ct);
+            var schedule = all.FirstOrDefault(s => s.ScheduleId == scheduleId);
+
+            if (schedule == null)
+                return NotFound(new { message = "Không tìm thấy lịch." });
+
+            return Ok(schedule);
         }
 
-        // Cập nhật thông tin lịch làm việc
+        // ===========================================
+        // 5) Cập nhật lịch (DÙNG DTO)
+        // ===========================================
         [HttpPut("Update_Schedule_Doctor")]
-        [Authorize (Roles = "R02")]
-        public async Task<IActionResult> UpdateSchedule([FromBody] Models.Schedule schedule, CancellationToken ct = default)
+        [Authorize(Roles = "R02")]
+        public async Task<IActionResult> UpdateSchedule([FromBody] UpdateScheduleRequest req, CancellationToken ct = default)
         {
             try
             {
+                var schedule = new Models.Schedule
+                {
+                    ScheduleId = req.ScheduleId,
+                    DoctorId = req.DoctorId,
+                    WorkDate = req.WorkDate,
+                    StartTime = req.StartTime,
+                    EndTime = req.EndTime,
+                    Status = req.Status,
+                    IsActive = req.IsActive
+                };
+
                 bool updated = await _scheduleService.UpdateScheduleAsync(schedule, ct);
-                if (updated)
-                    return NoContent();
-                else
-                    return NotFound("Schedule not found.");
+                if (!updated)
+                    return NotFound(new { message = "Không tìm thấy lịch để cập nhật." });
+
+                return Ok(new { message = "Cập nhật lịch thành công." });
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Invalid input for updating schedule.");
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex, "Error updating schedule: {Message}", ex.Message);
-                return Conflict(ex.Message);
+                return Conflict(new { message = ex.Message });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error updating schedule.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+                return StatusCode(500, new { message = "Lỗi hệ thống." });
             }
         }
 
-        // Xóa lịch làm việc
+        // ===========================================
+        // 6) Xóa lịch
+        // ===========================================
         [HttpDelete("Delete_Schedule_Doctor")]
-        [Authorize (Roles = "R01, R02")]
+        [Authorize(Roles = "R01,R02")]
         public async Task<IActionResult> DeleteSchedule([FromQuery] int scheduleId, CancellationToken ct = default)
         {
             try
             {
                 bool deleted = await _scheduleService.DeleteScheduleAsync(scheduleId, ct);
-                if (deleted)
-                    return Ok(new { message = "Xóa lịch thành công." });
-                else
-                    return NotFound("Schedule not found.");
+                if (!deleted)
+                    return NotFound(new { message = "Không tìm thấy lịch để xoá." });
+
+                return Ok(new { message = "Xóa lịch thành công." });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error deleting schedule.");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+                return StatusCode(500, new { message = "Lỗi hệ thống." });
             }
         }
-
-
     }
 }

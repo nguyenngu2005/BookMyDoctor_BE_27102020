@@ -230,6 +230,29 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -269,6 +292,19 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -292,6 +328,19 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -423,6 +472,42 @@
         }
       }
     },
+    "/api/Doctors/GetDoctorAppointments": {
+      "get": {
+        "tags": [
+          "Doctors"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "patientName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "patientPhone",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Owner/create-doctor": {
       "post": {
         "tags": [
@@ -533,7 +618,29 @@
         }
       }
     },
-    "/api/Patients/UpdatePatient": {
+    "/api/Patients/CancelAppointment": {
+      "put": {
+        "tags": [
+          "Patients"
+        ],
+        "parameters": [
+          {
+            "name": "appointId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Patients/UpdateAppointment": {
       "put": {
         "tags": [
           "Patients"
@@ -561,6 +668,14 @@
             "schema": {
               "type": "string",
               "format": "time"
+            }
+          },
+          {
+            "name": "appointId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -597,7 +712,29 @@
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "patientId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Patients/DeleteAppointment": {
+      "delete": {
+        "tags": [
+          "Patients"
+        ],
+        "parameters": [
+          {
+            "name": "appointId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -624,7 +761,7 @@
         }
       }
     },
-    "/api/Profile/Update_Profile_Me": {
+    "/api/Profile/update-profile-me": {
       "put": {
         "tags": [
           "Profile"
@@ -736,17 +873,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Schedule"
+                "$ref": "#/components/schemas/AddScheduleRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Schedule"
+                "$ref": "#/components/schemas/AddScheduleRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Schedule"
+                "$ref": "#/components/schemas/AddScheduleRequest"
               }
             }
           }
@@ -789,17 +926,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Schedule"
+                "$ref": "#/components/schemas/UpdateScheduleRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Schedule"
+                "$ref": "#/components/schemas/UpdateScheduleRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Schedule"
+                "$ref": "#/components/schemas/UpdateScheduleRequest"
               }
             }
           }
@@ -836,6 +973,35 @@
   },
   "components": {
     "schemas": {
+      "AddScheduleRequest": {
+        "type": "object",
+        "properties": {
+          "DoctorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "WorkDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "StartTime": {
+            "type": "string",
+            "format": "time"
+          },
+          "EndTime": {
+            "type": "string",
+            "format": "time"
+          },
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "BookingResult": {
         "type": "object",
         "properties": {
@@ -936,10 +1102,6 @@
       "ChatMessage": {
         "type": "object",
         "properties": {
-          "Role": {
-            "type": "string",
-            "nullable": true
-          },
           "Content": {
             "type": "string",
             "nullable": true
@@ -959,6 +1121,11 @@
             "items": {
               "$ref": "#/components/schemas/ChatMessage"
             },
+            "nullable": true
+          },
+          "UserId": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -1143,18 +1310,18 @@
             "type": "string",
             "nullable": true
           },
-          "DefaultDays": {
+          "WorkingDays": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "nullable": true
           },
-          "DefaultStart": {
+          "WorkingTimeStart": {
             "type": "string",
             "nullable": true
           },
-          "DefaultEnd": {
+          "WorkingTimeEnd": {
             "type": "string",
             "nullable": true
           }
@@ -1230,12 +1397,7 @@
         },
         "additionalProperties": false
       },
-      "Schedule": {
-        "required": [
-          "DoctorId",
-          "Status",
-          "WorkDate"
-        ],
+      "UpdateScheduleRequest": {
         "type": "object",
         "properties": {
           "ScheduleId": {
@@ -1259,9 +1421,8 @@
             "format": "time"
           },
           "Status": {
-            "maxLength": 10,
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "IsActive": {
             "type": "boolean"

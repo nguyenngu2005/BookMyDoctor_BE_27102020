@@ -17,8 +17,8 @@ namespace BookMyDoctor_WebAPI.RequestModel
         public string? WorkTime { get; set; }
 
         // Dung de set sinh lich tu dong 
-        public List<string>? DefaultDays { get; set; }
-        public string? DefaultStart { get; set; }
-        public string? DefaultEnd { get; set; }
+        public List<string>? WorkingDays { get; set; }
+        public string? WorkingTimeStart { get; set; }
+        public string? WorkingTimeEnd { get; set; }
     }
 }

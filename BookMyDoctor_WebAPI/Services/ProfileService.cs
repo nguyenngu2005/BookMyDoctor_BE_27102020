@@ -25,6 +25,8 @@ namespace BookMyDoctor_WebAPI.Services
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
+        public string? Department { get; set; } // Chuyên khoa (Doctor only)
+        public int? ExperienceYear { get; set; } // Năm kinh nghiệm (Doctor only)
     }
 
     // ===== Triển khai service =====
@@ -53,7 +55,9 @@ namespace BookMyDoctor_WebAPI.Services
                     DateOfBirth = d?.DateOfBirth,
                     Phone = d?.Phone,
                     Email = d?.Email,
-                    Address = d?.Address
+                    Address = d?.Address,
+                    Department = d?.Department,
+                    ExperienceYear = d?.Experience_year
                 };
             }
 
@@ -90,11 +94,13 @@ namespace BookMyDoctor_WebAPI.Services
                 if (!string.IsNullOrWhiteSpace(req.Phone)) d.Phone = req.Phone.Trim();
                 if (!string.IsNullOrWhiteSpace(req.Email)) d.Email = req.Email.Trim();
                 if (!string.IsNullOrWhiteSpace(req.Address)) d.Address = req.Address.Trim();
+                if (!string.IsNullOrWhiteSpace(req.Department)) d.Department = req.Department.Trim();
+                if (req.ExperienceYear.HasValue) d.Experience_year = req.ExperienceYear.Value;
 
                 await _db.SaveChangesAsync(ct);
                 return "Doctor profile updated";
             }
-            else // Patient (R03 default)
+            else if (u.RoleId == "R01" || u.RoleId == "R03") // Patient (R03 default)
             {
                 var p = await _db.Patients.FirstOrDefaultAsync(x => x.UserId == userId, ct);
                 if (p == null) return "Patient profile not found";
@@ -109,6 +115,7 @@ namespace BookMyDoctor_WebAPI.Services
                 await _db.SaveChangesAsync(ct);
                 return "Patient profile updated";
             }
+            else return "Không có vai trò phù hợp để update";
         }
     }
 }

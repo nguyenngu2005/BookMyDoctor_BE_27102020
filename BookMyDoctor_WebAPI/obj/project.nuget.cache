@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iTPft+LC85c=",
+  "dgSpecHash": "G5Y7p+omhV8=",
   "success": true,
-  "projectFilePath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
+  "projectFilePath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PC\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",

@@ -1,7 +1,6 @@
 ﻿using BookMyDoctor_WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace BookMyDoctor_WebAPI.Controllers
 {
@@ -74,6 +73,33 @@ namespace BookMyDoctor_WebAPI.Controllers
             catch (AppException ax)
             {
                 return StatusCode(ax.StatusCode, new { message = ax.Message });
+            }
+        }
+
+        // Lay toan bo appoint cua doctor
+        [HttpGet("GetDoctorAppointments")]
+        [Authorize(Roles = "R01, R02")]
+        public async Task<IActionResult> GetAppointments(
+            [FromQuery] int doctorId,
+            [FromQuery] string patientName,
+            [FromQuery] string patientPhone,
+            CancellationToken ct = default)
+        {
+            if (doctorId <= 0)
+                return BadRequest(new { message = "doctorId is required and must be > 0" });
+
+            try
+            {
+                var appointments = await _service.GetDoctorAppointmentsAsync(doctorId, patientName, patientPhone, ct);
+                if (appointments == null || !appointments.Any())
+                    return NotFound(new { message = "Không tìm thấy cuộc hẹn nào cho bác sĩ này." });
+
+                return Ok(appointments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi lấy appointments của bác sĩ ID = {DoctorId}", doctorId);
+                return StatusCode(500, new { message = "Đã xảy ra lỗi nội bộ. Vui lòng thử lại sau." });
             }
         }
     }

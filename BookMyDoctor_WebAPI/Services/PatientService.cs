@@ -28,11 +28,15 @@ namespace BookMyDoctor_WebAPI.Services
             DateOnly appointDate,
             TimeOnly appointHour,
             PatientUpdateRequest dto,
+            int? appointId = null,
             CancellationToken ct = default);
 
         Task<bool> DeletePatientAsync(
             int patientId,
             CancellationToken ct = default);
+
+        Task<bool> DeleteAppointmentAsync(int appointId, CancellationToken ct = default);
+        Task<bool> UpdateAppointmentStatusAsync(int AppointId, CancellationToken ct = default);
     }
 
     public class PatientService : IPatientService
@@ -51,7 +55,7 @@ namespace BookMyDoctor_WebAPI.Services
             string? name,
             DateTime? appointDate,
             string? status,
-            int? doctorId = null,                // ✅ thêm parameter lọc theo DoctorId
+            int? doctorId = null,
             CancellationToken ct = default)
         {
             try
@@ -96,6 +100,7 @@ namespace BookMyDoctor_WebAPI.Services
 
                     return new PatientDetailRequest
                     {
+                        PatientId = p.Patient.PatientId,
                         FullName = p.Patient.Name,
                         Username = p.User?.Username,
                         DateOfBirth = p.Patient.DateOfBirth,
@@ -224,11 +229,12 @@ namespace BookMyDoctor_WebAPI.Services
                         orderby s.WorkDate descending, s.StartTime descending
                         select new HistoryRequest
                         {
+                            AppointId = a.AppointId,
                             NamePatient = p.Name,
                             NameDoctor = d.Name,
                             PhoneDoctor = d.Phone,
                             Department = d.Department,
-                            AppointHour = s.StartTime,
+                            AppointHour = a.AppointHour,
                             AppointDate = s.WorkDate,
                             Status = a.Status,
                             Symptoms = a.Symptom ?? "Không có",
@@ -244,6 +250,7 @@ namespace BookMyDoctor_WebAPI.Services
             DateOnly appointDate,
             TimeOnly appointHour,
             PatientUpdateRequest dto,
+            int? appointId = null,
             CancellationToken ct = default)
         {
             try
@@ -253,30 +260,59 @@ namespace BookMyDoctor_WebAPI.Services
                 if (patient == null)
                     return ServiceResult<bool>.Fail(AuthError.NotFound, "Không tìm thấy bệnh nhân để cập nhật.");
 
-                // 2) Latest appointment (must have Schedule)
-                var latestAppointment = await _context.Appointments
-                    .Include(a => a.Schedule)
-                    .Where(a => a.PatientId == patientId && a.Schedule != null)
-                    .OrderByDescending(a => a.Schedule!.WorkDate)
-                    .FirstOrDefaultAsync(ct);
+                // 2) Determine target appointment:
+                var targetAppointment = appointId.HasValue
+                    ? await _context.Appointments
+                        .Include(a => a.Schedule)
+                        .FirstOrDefaultAsync(a => a.AppointId == appointId.Value && a.PatientId == patientId, ct)
+                    : await _context.Appointments
+                        .Include(a => a.Schedule)
+                        .Where(a => a.PatientId == patientId && a.Schedule != null)
+                        .OrderByDescending(a => a.Schedule!.WorkDate)
+                        .FirstOrDefaultAsync(ct);
 
-                if (latestAppointment == null)
-                    return ServiceResult<bool>.Fail(AuthError.NotFound, "Bệnh nhân chưa có cuộc hẹn nào để cập nhật.");
+                if (targetAppointment == null)
+                    return ServiceResult<bool>.Fail(AuthError.NotFound, "Không tìm thấy cuộc hẹn để cập nhật.");
 
                 bool isUpdated = false;
 
-                // 3) Update Symptom
-                if (!string.IsNullOrWhiteSpace(dto.Symptoms))
+                // 3) Optionally reschedule
+                var scheduleForRequested = await _context.Schedules
+                    .FirstOrDefaultAsync(s => s.WorkDate == appointDate && s.StartTime == appointHour, ct);
+
+                if (scheduleForRequested != null && scheduleForRequested.ScheduleId != targetAppointment.ScheduleId)
                 {
-                    latestAppointment.Symptom = dto.Symptoms.Trim();
+                    targetAppointment.ScheduleId = scheduleForRequested.ScheduleId;
+                    targetAppointment.AppointHour = appointHour;
+                    isUpdated = true;
+                }
+                else if (targetAppointment.AppointHour != appointHour)
+                {
+                    targetAppointment.AppointHour = appointHour;
                     isUpdated = true;
                 }
 
-                // 4) Upsert Prescription
+                // 4) Update Status
+                if (!string.IsNullOrWhiteSpace(dto.Status))
+                {
+                    var trimmedStatus = dto.Status.Trim();
+                    // Optionally: validate status value here if needed
+                    targetAppointment.Status = trimmedStatus;
+                    isUpdated = true;
+                }
+
+                // 5) Update Symptom
+                if (!string.IsNullOrWhiteSpace(dto.Symptoms))
+                {
+                    targetAppointment.Symptom = dto.Symptoms.Trim();
+                    isUpdated = true;
+                }
+
+                // 6) Upsert Prescription
                 if (!string.IsNullOrWhiteSpace(dto.Prescription))
                 {
                     var existingPrescription = await _context.Prescriptions
-                        .FirstOrDefaultAsync(pre => pre.AppointId == latestAppointment.AppointId, ct);
+                        .FirstOrDefaultAsync(pre => pre.AppointId == targetAppointment.AppointId, ct);
 
                     if (existingPrescription != null)
                     {
@@ -287,7 +323,7 @@ namespace BookMyDoctor_WebAPI.Services
                     {
                         await _context.Prescriptions.AddAsync(new Prescription
                         {
-                            AppointId = latestAppointment.AppointId,
+                            AppointId = targetAppointment.AppointId,
                             Description = dto.Prescription.Trim(),
                             DateCreated = DateTime.Now,
                             IsActive = true
@@ -310,12 +346,81 @@ namespace BookMyDoctor_WebAPI.Services
             }
         }
 
-        // ==================== DELETE ====================
+        // ==================== DELETE PATIENT====================
         public async Task<bool> DeletePatientAsync(int patientId, CancellationToken ct = default)
         {
             var existing = await _repo.GetByIdAsync(patientId, ct);
             if (existing == null) return false;
             return await _repo.DeleteAsync(patientId, ct);
+        }
+
+        // ================ DELETE APPOINTMENT ===================
+        public async Task<bool> DeleteAppointmentAsync(int appointId, CancellationToken ct = default)
+        {
+            try
+            {
+                // Find appointment including prescriptions
+                var appointment = await _context.Appointments
+                    .Include(a => a.Prescriptions)
+                    .FirstOrDefaultAsync(a => a.AppointId == appointId && a.IsActive, ct);
+
+                if (appointment == null)
+                    return false;
+
+                // Soft-delete appointment
+                appointment.IsActive = false;
+
+                // Soft-delete related prescriptions (if any)
+                if (appointment.Prescriptions != null && appointment.Prescriptions.Any())
+                {
+                    foreach (var pres in appointment.Prescriptions)
+                    {
+                        pres.IsActive = false;
+                    }
+                }
+
+                await _context.SaveChangesAsync(ct);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DeleteAppointmentAsync] Error: {ex.Message}");
+                return false;
+            }
+        }
+
+        // ================ UPDATE APPOINTMENT STATUS ===================
+        public async Task<bool> UpdateAppointmentStatusAsync(int appointId, CancellationToken ct = default)
+        {
+            try
+            {
+                // Kiểm tra appointId hợp lệ
+                if (appointId <= 0)
+                    return false;
+
+                // Tìm appointment
+                var appointment = await _context.Appointments
+                    .FirstOrDefaultAsync(a => a.AppointId == appointId, ct);
+
+                if (appointment == null)
+                    return false;
+
+                // Nếu đã bị hủy thì không cần cập nhật
+                if (string.Equals(appointment.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                // Cập nhật trạng thái sang "Cancelled"
+                appointment.Status = "Cancelled";
+                appointment.IsActive = false;
+
+                await _context.SaveChangesAsync(ct);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[UpdateAppointmentStatusAsync] Error: {ex.Message}");
+                return false;
+            }
         }
     }
 }

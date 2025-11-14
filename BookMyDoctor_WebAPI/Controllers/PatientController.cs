@@ -48,7 +48,6 @@ namespace BookMyDoctor_WebAPI.Controllers
             }
         }
 
-
         // ==================== LẤY CHI TIẾT ====================
         //// GET: api/patient/5
         //[HttpGet("DetailPatient")]
@@ -90,40 +89,68 @@ namespace BookMyDoctor_WebAPI.Controllers
 
             return Ok(patients);
         }
+        //==================== set status sang cancel ==============
+        [HttpPut("CancelAppointment")]
+        [Authorize(Roles = "R03")]
+        public async Task<IActionResult> CancelAppointmentAsync(
+            [FromQuery] int appointId,
+            CancellationToken ct)
+        {
+            try
+            {
+                var result = await _service.UpdateAppointmentStatusAsync(appointId, ct);
+                if (!result)
+                    return NotFound(new { message = "Không tìm thấy lịch hẹn để hủy." });
+                return Ok(new { message = "Hủy lịch hẹn thành công." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Lỗi khi hủy lịch hẹn ID = {appointId}");
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
 
         // ==================== CẬP NHẬT ====================
         // PUT: api/patient/5
-        [HttpPut("UpdatePatient")]
+        [HttpPut("UpdateAppointment")]
         [Authorize(Roles = "R02")]
-        public async Task<IActionResult> UpdatePatient(int patientId, DateOnly appointDate, TimeOnly appointHour, [FromBody] PatientUpdateRequest dto, CancellationToken ct)
+        public async Task<IActionResult> UpdatePatient(
+            int patientId,
+            DateOnly appointDate,
+            TimeOnly appointHour,
+            [FromBody] PatientUpdateRequest dto,
+            [FromQuery] int? appointId,
+            CancellationToken ct)
         {
             if (dto == null)
                 return BadRequest(new { message = "Dữ liệu gửi lên không hợp lệ." });
 
             try
             {
-                var result = await _service.UpdatePatientAsync(patientId, appointDate, appointHour, dto, ct);
+                // Optional appointId can be provided to target a specific appointment.
+                var result = await _service.UpdatePatientAsync(patientId, appointDate, appointHour, dto, appointId, ct);
+
                 if (!result.Success)
-                    return NotFound(new { message = result.Message});
+                    return NotFound(new { message = result.Message });
 
                 return Ok(new { message = "Cập nhật triệu chứng và toa thuốc thành công." });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Lỗi khi cập nhật bệnh nhân ID hoac gio kham = {patientId}, {appointDate}, {appointHour}");
+                _logger.LogError(ex, $"Lỗi khi cập nhật bệnh nhân ID = {patientId}, AppointDate = {appointDate}, AppointHour = {appointHour}, AppointId = {appointId}");
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
-        // ==================== XÓA ====================
+        // ==================== XÓA patient====================
         // DELETE: api/patient/5
         [HttpDelete("DeletePatient")]
         [Authorize(Roles = "R01")]
-        public async Task<IActionResult> DeletePatient(int id, CancellationToken ct)
+        public async Task<IActionResult> DeletePatient(int patientId, CancellationToken ct)
         {
             try
             {
-                var deleted = await _service.DeletePatientAsync(id, ct);
+                var deleted = await _service.DeletePatientAsync(patientId, ct);
                 if (!deleted)
                     return NotFound(new { message = "Không tìm thấy bệnh nhân để xóa." });
 
@@ -131,7 +158,27 @@ namespace BookMyDoctor_WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Lỗi khi xóa bệnh nhân ID = {id}");
+                _logger.LogError(ex, $"Lỗi khi xóa bệnh nhân ID = {patientId}");
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        // ================== Xoa appointment ==================
+        // DELETE: api/patient/DeleteAppointment
+        [HttpDelete("DeleteAppointment")]
+        [Authorize(Roles = "R01")]
+        public async Task<IActionResult> DeleteAppointment(int appointId, CancellationToken ct)
+        {
+            try
+            {
+                var deleted = await _service.DeleteAppointmentAsync(appointId, ct);
+                if (!deleted)
+                    return NotFound(new { message = "Không tìm thấy lịch hẹn để xóa." });
+                return Ok(new { message = "Xóa lịch hẹn thành công." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Lỗi khi xóa lịch hẹn ID = {appointId}");
                 return StatusCode(500, new { message = ex.Message });
             }
         }

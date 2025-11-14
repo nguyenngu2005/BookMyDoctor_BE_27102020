@@ -128,6 +128,18 @@
         "Type": "System.Void",
         "MediaTypes": [],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
       }
     ]
   },
@@ -157,6 +169,18 @@
           "application/json"
         ],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
       }
     ]
   },
@@ -181,6 +205,25 @@
           "application/json"
         ],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 409
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
       }
     ]
   },
@@ -231,6 +274,32 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BookMyDoctor_WebAPI.Controllers.DoctorsController",
+    "Method": "GetAppointments",
+    "RelativePath": "api/Doctors/GetDoctorAppointments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "patientName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "patientPhone",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],
@@ -341,6 +410,38 @@
   },
   {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
+    "Method": "CancelAppointmentAsync",
+    "RelativePath": "api/Patients/CancelAppointment",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "appointId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
+    "Method": "DeleteAppointment",
+    "RelativePath": "api/Patients/DeleteAppointment",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "appointId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
     "Method": "DeletePatient",
     "RelativePath": "api/Patients/DeletePatient",
     "HttpMethod": "DELETE",
@@ -348,7 +449,7 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "patientId",
         "Type": "System.Int32",
         "IsRequired": false
       }
@@ -368,7 +469,7 @@
   {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
     "Method": "UpdatePatient",
-    "RelativePath": "api/Patients/UpdatePatient",
+    "RelativePath": "api/Patients/UpdateAppointment",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -392,6 +493,11 @@
         "Name": "dto",
         "Type": "BookMyDoctor_WebAPI.RequestModel.PatientUpdateRequest",
         "IsRequired": true
+      },
+      {
+        "Name": "appointId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -409,7 +515,7 @@
   {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.ProfileController",
     "Method": "UpdateProfile",
-    "RelativePath": "api/Profile/Update_Profile_Me",
+    "RelativePath": "api/Profile/update-profile-me",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -447,9 +553,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "schedule",
-        "Type": "BookMyDoctor_WebAPI.Models.Schedule",
-        "IsRequired": true
+        "Name": "req",
+        "Type": "BookMyDoctor_WebAPI.RequestModel.AddScheduleRequest",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -526,8 +632,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "schedule",
-        "Type": "BookMyDoctor_WebAPI.Models.Schedule",
+        "Name": "req",
+        "Type": "BookMyDoctor_WebAPI.RequestModel.UpdateScheduleRequest",
         "IsRequired": true
       }
     ],

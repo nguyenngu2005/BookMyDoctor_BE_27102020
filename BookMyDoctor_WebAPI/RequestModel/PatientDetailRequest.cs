@@ -2,6 +2,7 @@
 {
     public class PatientDetailRequest
     {
+        public int PatientId { get; set; }
         public int? DoctorId { get; set; }
         public string? FullName { get; set; }
         public string? Username { get; set; }

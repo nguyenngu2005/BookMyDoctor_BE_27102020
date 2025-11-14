@@ -2,6 +2,7 @@
 {
     public class HistoryRequest
     {
+        public int AppointId { get; set; }
         public string? NamePatient { get; set; }
         public string NameDoctor { get; set; } = null!;
         public string? PhoneDoctor { get; set; }

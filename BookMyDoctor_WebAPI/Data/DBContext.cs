@@ -163,6 +163,12 @@ namespace BookMyDoctor_WebAPI.Data
                     .HasDefaultValue("Scheduled")
                     .IsRequired();
 
+                // ✅ cấu hình đúng kiểu bit + default true
+                e.Property(x => x.IsActive)
+                    .HasColumnType("bit")
+                    .HasDefaultValue(true)
+                    .IsRequired();
+
                 e.HasOne(x => x.Doctor)
                     .WithMany(d => d.Schedules)
                     .HasForeignKey(x => x.DoctorId)

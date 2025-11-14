@@ -48,9 +48,14 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("GoogleAi"));
 builder.Services.Configure<BackendOptions>(builder.Configuration.GetSection("Backend"));
 
-builder.Services.AddHttpClient<IGeminiClient, GeminiClient>();
-builder.Services.AddHttpClient<IBookingBackend, BookingBackend>();
-builder.Services.AddScoped<IChatService, ChatService>();
+// Typed HttpClient cho Gemini & Backend thật
+builder.Services.AddHttpClient<GeminiClient>();
+builder.Services.AddHttpClient<BookingBackend>();
+
+// Handler AI + ChatService
+builder.Services.AddSingleton<BookingBackendHandler>();
+builder.Services.AddScoped<ChatService>();
+
 // ============= !!! QUAN TRỌNG: Hasher DI =============
 // ❌ BỎ dòng cũ vì PasswordHasher là static helper, không inject được:
 // builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -213,19 +218,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// --- Dashboard Hangfire ---
-app.UseHangfireDashboard("/hangfire");
-// --- Đặt job định kỳ ---
-RecurringJob.AddOrUpdate<ScheduleGeneratorService>(
-    "generate-monthly-schedule",
-    s => s.GenerateNextMonthSchedulesAsync(),
-    Cron.Monthly()
-);
+app.UseHttpsRedirection();                // 👈 nên bật cho đồng bộ HTTPS
 
-app.UseCors(AllowFrontend);
+// Hangfire
+app.UseHangfireDashboard("/hangfire");
+// ĐÚNG THỨ TỰ:
 app.UseRouting();
+app.UseCors(AllowFrontend);
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

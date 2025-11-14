@@ -17,55 +17,76 @@ namespace BookMyDoctor_WebAPI.Controllers
             _profileService = profileService;
         }
 
-        // LẤY THÔNG TIN PROFILE HIỆN TẠI
-
+        // ============================
+        // LẤY PROFILE HIỆN TẠI
+        // ============================
         [HttpGet("profile-me")]
-        [Authorize] // Cookie-based auth
+        [Authorize]
         public async Task<IActionResult> Me()
         {
-            // Lấy userId từ cookie claim
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdClaim))
-                return Unauthorized(new { message = "User not logged in" });
+            try
+            {
+                var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrWhiteSpace(idClaim))
+                    return Unauthorized(new { message = "Bạn chưa đăng nhập." });
 
-            int userId = int.Parse(userIdClaim);
+                int userId;
+                if (!int.TryParse(idClaim, out userId))
+                    return BadRequest(new { message = "UserId không hợp lệ trong token/cookie." });
 
-            // Lấy profile theo Role
-            var profile = await _profileService.GetProfileAsync(userId);
-            if (profile == null)
-                return NotFound(new { message = "Profile not found" });
+                var profile = await _profileService.GetProfileAsync(userId);
+                if (profile == null)
+                    return NotFound(new { message = "Không tìm thấy hồ sơ người dùng." });
 
-            return Ok(profile);
+                return Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi hệ thống: {ex.Message}" });
+            }
         }
 
-
-        [HttpPut("Update_Profile_Me")]
-        //[Authorize] // Cookie-based auth
+        // ============================
+        // UPDATE PROFILE
+        // ============================
+        [HttpPut("update-profile-me")]
+        [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] ProfileRequest request)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var message = await _profileService.UpdateProfileAsync(userId, request);
-            return Ok(new { message });
+            try
+            {
+                // Lấy userId từ claim
+                var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrWhiteSpace(idClaim))
+                    return Unauthorized(new { message = "Bạn chưa đăng nhập." });
+
+                if (!int.TryParse(idClaim, out int userId))
+                    return BadRequest(new { message = "UserId không hợp lệ trong token/cookie." });
+
+                // Validate request model
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .Where(m => !string.IsNullOrWhiteSpace(m));
+
+                    return BadRequest(new { message = string.Join("; ", errors) });
+                }
+
+                // Gọi service update
+                var result = await _profileService.UpdateProfileAsync(userId, request);
+
+                // Nếu service return string lỗi → BadRequest
+                if (result.Contains("not found", StringComparison.InvariantCultureIgnoreCase))
+                    return NotFound(new { message = result });
+
+                return Ok(new { message = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi hệ thống: {ex.Message}" });
+            }
         }
-
-
-        //public async Task<IActionResult> UpdateProfile([FromBody] ProfileRequest request)
-        //{
-        //    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        //    var role = User.FindFirstValue(ClaimTypes.Role);
-
-        //    Console.WriteLine($"[DEBUG] Role from cookie/token: {role}");
-
-        //    string message;
-
-        //    if (role == "Patient")
-        //        message = await _profileService.UpdateProfileAsync(userId, request);
-        //    else if (role == "Doctor")
-        //        message = await _profileService.UpdateProfileAsync(userId, request);
-        //    else
-        //        return Forbid();
-
-        //    return Ok(new { message });
-        //}
     }
 }

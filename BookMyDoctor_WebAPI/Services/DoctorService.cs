@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using BookMyDoctor_WebAPI.Data;
 using BookMyDoctor_WebAPI.Models;
+using BookMyDoctor_WebAPI.RequestModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookMyDoctor_WebAPI.Services
@@ -26,6 +27,12 @@ namespace BookMyDoctor_WebAPI.Services
             CancellationToken ct = default);
 
         Task<bool> DeleteDoctorAsync(int doctorId, CancellationToken ct = default);
+
+        Task<IReadOnlyList<DoctorAppointmentsRequest>> GetDoctorAppointmentsAsync(
+            int doctorId,
+            string patientName,
+            string patientPhone,
+            CancellationToken ct = default);
     }
 
     public class DoctorService : IDoctorService
@@ -200,6 +207,68 @@ namespace BookMyDoctor_WebAPI.Services
                 // Ràng buộc FK khác chặn xóa (trường hợp cấu hình cascade chưa đúng)
                 throw new AppException($"Xóa không thành công do ràng buộc dữ liệu: {ex.GetBaseException().Message}", 409);
             }
+        }
+
+        // Lấy danh sách lịch hẹn của bác sĩ với các thông tin bệnh nhân kèm theo
+        public async Task<IReadOnlyList<DoctorAppointmentsRequest>> GetDoctorAppointmentsAsync(
+            int doctorId,
+            string patientName,
+            string patientPhone,
+            CancellationToken ct = default)
+        {
+            if (doctorId <= 0) return Array.Empty<DoctorAppointmentsRequest>();
+
+            var query = _db.Appointments
+                .AsNoTracking()
+                .Include(a => a.Schedule)
+                .Include(a => a.Patient)
+                .Where(a => a.IsActive && a.Schedule != null && a.Schedule.DoctorId == doctorId)
+                .AsQueryable();
+
+            // Filter theo tên bệnh nhân
+            if (!string.IsNullOrWhiteSpace(patientName))
+            {
+                var nameLower = patientName.Trim().ToLowerInvariant();
+                query = query.Where(a => a.Patient != null && a.Patient.Name != null &&
+                                         a.Patient.Name.ToLower().Contains(nameLower));
+            }
+
+            // Filter theo số điện thoại
+            if (!string.IsNullOrWhiteSpace(patientPhone))
+            {
+                var phone = patientPhone.Trim();
+                query = query.Where(a => a.Patient != null && a.Patient.Phone != null &&
+                                         a.Patient.Phone.Contains(phone));
+            }
+
+            var list = await query
+                .OrderBy(a => a.Schedule!.WorkDate)
+                .ThenBy(a => a.AppointHour)
+                .Select(a => new DoctorAppointmentsRequest
+                {
+                    AppointId = a.AppointId,
+                    DoctorId = a.Schedule!.DoctorId,
+                    PatientId = a.Patient != null ? a.Patient.PatientId : (int?)null,
+                    FullName = a.Patient != null ? a.Patient.Name : null,
+                    Username = a.Patient != null && a.Patient.User != null ? a.Patient.User.Username : null,
+                    DateOfBirth = a.Patient != null ? a.Patient.DateOfBirth : null,
+                    Gender = a.Patient != null ? a.Patient.Gender : null,
+                    PhoneNumber = a.Patient != null ? a.Patient.Phone : null,
+                    Email = a.Patient != null ? a.Patient.Email : null,
+                    Address = a.Patient != null ? a.Patient.Address : null,
+                    Status = a.Status,
+                    Symptoms = a.Symptom,
+                    Prescription = _db.Prescriptions
+                        .Where(pre => pre.AppointId == a.AppointId)
+                        .OrderByDescending(pre => pre.DateCreated)
+                        .Select(pre => pre.Description)
+                        .FirstOrDefault(),
+                    AppointDate = a.Schedule!.WorkDate,
+                    AppointHour = a.AppointHour
+                })
+                .ToListAsync(ct);
+
+            return list;
         }
     }
 }

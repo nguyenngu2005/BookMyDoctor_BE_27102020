@@ -24,6 +24,7 @@ public interface IBookingService
     Task<BookingResult> PublicBookAsync(PublicBookingRequest req, CancellationToken ct);
     Task<IEnumerable<BusySlot>> GetBusySlotsAsync(int doctorId, DateTime date, CancellationToken ct);
     Task<bool> DeleteAppointmentAsync(int appointmentId, CancellationToken ct);
+
 }
 
 

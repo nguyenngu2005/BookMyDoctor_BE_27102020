@@ -58,18 +58,21 @@ namespace BookMyDoctor_WebAPI.Data.Repositories
                 .Where(s => s.IsActive && s.Doctor!.IsActive)
                 .Select(s => new DoctorScheduleRequest
                 {
+                    ScheduleId = s.ScheduleId,          // 🔥 FIX QUAN TRỌNG
                     DoctorId = s.DoctorId,
                     DoctorName = s.Doctor!.Name,
                     WorkDate = s.WorkDate,
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
-                    Status = s.Status
+                    Status = s.Status,
+                    IsActive = s.IsActive
                 })
                 .OrderBy(s => s.WorkDate)
                 .ThenBy(s => s.StartTime)
                 .AsNoTracking()
                 .ToListAsync(ct);
         }
+
 
         public async Task<IReadOnlyList<Schedule>> GetByDoctorAndDateAsync(
             int doctorId, DateOnly date, CancellationToken ct = default)

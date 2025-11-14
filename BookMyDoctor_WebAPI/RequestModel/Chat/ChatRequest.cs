@@ -1,7 +1,11 @@
-﻿namespace BookMyDoctor_WebAPI.RequestModel.Chat;
-
-public class ChatRequest
+﻿namespace BookMyDoctor_WebAPI.RequestModel.Chat
 {
-    public string SessionId { get; set; } = Guid.NewGuid().ToString();
-    public List<ChatMessage> Messages { get; set; } = new();
+    public class ChatRequest
+    {
+        public string SessionId { get; set; } = Guid.NewGuid().ToString();
+        public List<ChatMessage> Messages { get; set; } = new();
+        public int? UserId { get; set; }        // ✅ user đã login (nếu có)
+    }
+
 }
+

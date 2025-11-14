@@ -1,4 +1,4 @@
-﻿//Magic. Don't touch
+﻿// Magic. Don't touch
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -16,9 +16,9 @@ namespace BookMyDoctor_WebAPI.Models
         [JsonIgnore]
         public Doctor? Doctor { get; set; }
 
-        [Required]
-        [Column(TypeName = "date")]
+        [Required, Column(TypeName = "date")]
         public DateOnly WorkDate { get; set; }
+
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
 
@@ -27,6 +27,8 @@ namespace BookMyDoctor_WebAPI.Models
 
         [JsonIgnore]
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        public bool IsActive { get; set; } = true; // default true
+
+        [Column(TypeName = "bit")]
+        public bool IsActive { get; set; } = true;
     }
 }

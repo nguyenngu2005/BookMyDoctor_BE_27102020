@@ -3,7 +3,6 @@ using BookMyDoctor_WebAPI.Data.Repositories; // IScheduleRepository
 using BookMyDoctor_WebAPI.Models;
 using BookMyDoctor_WebAPI.RequestModel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BookMyDoctor_WebAPI.Services
 {
@@ -50,8 +49,25 @@ namespace BookMyDoctor_WebAPI.Services
 
         // ========== Queries ==========
 
-        public async Task<IEnumerable<DoctorScheduleRequest>> GetAllDoctorSchedulesAsync(CancellationToken ct = default)
+        public async Task<IEnumerable<DoctorScheduleRequest>> GetAllDoctorSchedulesAsync(CancellationToken ct)
             => await _repo.GetAllDoctorSchedulesAsync(ct);
+        //{
+        //    return await _context.Schedules
+        //        .AsNoTracking()
+        //        .Include(s => s.Doctor)
+        //        .Select(s => new DoctorScheduleRequest
+        //        {
+        //            ScheduleId = s.ScheduleId,
+        //            DoctorId = s.DoctorId,
+        //            DoctorName = s.Doctor != null ? (s.Doctor.Name ?? string.Empty) : string.Empty,
+        //            WorkDate = s.WorkDate,
+        //            StartTime = s.StartTime,
+        //            EndTime = s.EndTime,
+        //            Status = s.Status ?? "Scheduled",
+        //            IsActive = s.IsActive         
+        //        })
+        //        .ToListAsync(ct);
+        //}
 
         public async Task<IReadOnlyList<Schedule>> GetDoctorSchedulesAsync(
             int doctorId,
@@ -63,9 +79,9 @@ namespace BookMyDoctor_WebAPI.Services
         }
 
         public async Task<List<DoctorScheduleRequest>> GetDoctorSchedulesByNameAsync(
-            string? doctorName,
-            DateOnly? date,
-            CancellationToken ct = default)
+    string? doctorName,
+    DateOnly? date,
+    CancellationToken ct = default)
         {
             var query = _context.Schedules
                 .Include(s => s.Doctor)
@@ -87,19 +103,21 @@ namespace BookMyDoctor_WebAPI.Services
             var result = await query
                 .Select(s => new DoctorScheduleRequest
                 {
+                    ScheduleId = s.ScheduleId,
                     DoctorId = s.DoctorId,
                     DoctorName = s.Doctor != null ? (s.Doctor.Name ?? string.Empty) : string.Empty,
                     WorkDate = s.WorkDate,
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
                     Status = s.Status ?? "Scheduled",
-                    IsActive = s.Doctor != null && s.Doctor.IsActive
+                    IsActive = s.IsActive
                 })
+                .OrderBy(s => s.WorkDate)
+                .ThenBy(s => s.StartTime)
                 .ToListAsync(ct);
 
             return result;
         }
-
         // ========== Commands ==========
 
         public async Task<Schedule> AddScheduleAsync(Schedule schedule, CancellationToken ct = default)

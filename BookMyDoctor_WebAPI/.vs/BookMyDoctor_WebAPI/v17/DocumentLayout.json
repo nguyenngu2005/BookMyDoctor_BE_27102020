@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\",
+  "WorkspaceRootPath": "C:\\Users\\Huong\\Documents\\ProjectSWP391_BookMyDoctor\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\",
   "Documents": [],
   "DocumentGroupContainers": [
     {
@@ -27,11 +27,11 @@
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             }
           ]
         }

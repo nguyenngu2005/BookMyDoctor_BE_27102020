@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj": {}
+    "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj": {}
   },
   "projects": {
-    "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj": {
+    "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
+        "projectUniqueName": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
         "projectName": "BookMyDoctor_WebAPI",
-        "projectPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
+        "projectPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
         "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-        "outputPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\obj\\",
+        "outputPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -116,14 +116,14 @@
         }
       }
     },
-    "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj": {
+    "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj",
+        "projectUniqueName": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj",
         "projectName": "Test_BookMyDoctor",
-        "projectPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj",
+        "projectPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj",
         "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-        "outputPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\obj\\",
+        "outputPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\Test_BookMyDoctor\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -142,8 +142,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj": {
-                "projectPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj"
+              "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj": {
+                "projectPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj"
               }
             }
           }

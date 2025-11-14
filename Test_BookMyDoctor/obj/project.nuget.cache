@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "oarmE/61q68=",
+  "dgSpecHash": "b3Qcr6k9ciU=",
   "success": true,
-  "projectFilePath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj",
+  "projectFilePath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020\\Test_BookMyDoctor\\Test_BookMyDoctor.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PC\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",

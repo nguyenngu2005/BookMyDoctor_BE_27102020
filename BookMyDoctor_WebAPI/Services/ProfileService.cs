@@ -81,12 +81,12 @@ namespace BookMyDoctor_WebAPI.Services
         public async Task<string> UpdateProfileAsync(int userId, ProfileRequest req, CancellationToken ct = default)
         {
             var u = await _db.Users.FirstOrDefaultAsync(x => x.UserId == userId, ct);
-            if (u == null) return "User not found";
+            if (u == null) return "Người dùng không tìm thấy";
 
             if (u.RoleId == "R02") // Doctor
             {
                 var d = await _db.Doctors.FirstOrDefaultAsync(x => x.UserId == userId, ct);
-                if (d == null) return "Doctor profile not found";
+                if (d == null) return "Dữ liệu bác sĩ không tìm thấy";
 
                 if (!string.IsNullOrWhiteSpace(req.Name)) d.Name = req.Name.Trim();
                 if (!string.IsNullOrWhiteSpace(req.Gender)) d.Gender = req.Gender.Trim();
@@ -98,12 +98,12 @@ namespace BookMyDoctor_WebAPI.Services
                 if (req.ExperienceYear.HasValue) d.Experience_year = req.ExperienceYear.Value;
 
                 await _db.SaveChangesAsync(ct);
-                return "Doctor profile updated";
+                return "Thông tin bác sĩ đã được cập nhập";
             }
             else if (u.RoleId == "R01" || u.RoleId == "R03") // Patient (R03 default)
             {
                 var p = await _db.Patients.FirstOrDefaultAsync(x => x.UserId == userId, ct);
-                if (p == null) return "Patient profile not found";
+                if (p == null) return "Thông tin bệnh nhân không tìm thấy";
 
                 if (!string.IsNullOrWhiteSpace(req.Name)) p.Name = req.Name.Trim();
                 if (!string.IsNullOrWhiteSpace(req.Gender)) p.Gender = req.Gender.Trim();
@@ -113,7 +113,7 @@ namespace BookMyDoctor_WebAPI.Services
                 if (!string.IsNullOrWhiteSpace(req.Address)) p.Address = req.Address.Trim();
 
                 await _db.SaveChangesAsync(ct);
-                return "Patient profile updated";
+                return "Thông tin bệnh nhân đã được cập nhập";
             }
             else return "Không có vai trò phù hợp để update";
         }

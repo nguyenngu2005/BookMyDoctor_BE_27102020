@@ -165,22 +165,22 @@ namespace BookMyDoctor_WebAPI.Controllers
 
         // ================== Xoa appointment ==================
         // DELETE: api/patient/DeleteAppointment
-        [HttpDelete("DeleteAppointment")]
-        [Authorize(Roles = "R01")]
-        public async Task<IActionResult> DeleteAppointment(int appointId, CancellationToken ct)
-        {
-            try
-            {
-                var deleted = await _service.DeleteAppointmentAsync(appointId, ct);
-                if (!deleted)
-                    return NotFound(new { message = "Không tìm thấy lịch hẹn để xóa." });
-                return Ok(new { message = "Xóa lịch hẹn thành công." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Lỗi khi xóa lịch hẹn ID = {appointId}");
-                return StatusCode(500, new { message = ex.Message });
-            }
-        }
+        //[HttpDelete("DeleteAppointment")]
+        //[Authorize(Roles = "R01")]
+        //public async Task<IActionResult> DeleteAppointment(int appointId, CancellationToken ct)
+        //{
+        //    try
+        //    {
+        //        var deleted = await _service.DeleteAppointmentAsync(appointId, ct);
+        //        if (!deleted)
+        //            return NotFound(new { message = "Không tìm thấy lịch hẹn để xóa." });
+        //        return Ok(new { message = "Xóa lịch hẹn thành công." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, $"Lỗi khi xóa lịch hẹn ID = {appointId}");
+        //        return StatusCode(500, new { message = ex.Message });
+        //    }
+        //}
     }
 }

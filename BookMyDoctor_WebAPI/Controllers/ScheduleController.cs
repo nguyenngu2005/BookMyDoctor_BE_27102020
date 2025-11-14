@@ -91,17 +91,17 @@ namespace BookMyDoctor_WebAPI.Controllers
             }
             catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Invalid input for adding schedule.");
+                _logger.LogError(ex, "Sai định dạng khi thêm lịch");
                 return BadRequest(new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex, "Error adding schedule: {Message}", ex.Message);
+                _logger.LogError(ex, "Lỗi khi thêm vào lịch: {Message}", ex.Message);
                 return Conflict(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error adding schedule.");
+                _logger.LogError(ex, "Các lỗi khác khi thêm vào hệ thống");
                 return StatusCode(500, new { message = "Lỗi hệ thống. Vui lòng thử lại." });
             }
         }

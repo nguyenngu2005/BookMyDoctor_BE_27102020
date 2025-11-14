@@ -1,127 +1,135 @@
-﻿using BookMyDoctor_WebAPI.RequestModel.Chat;
-using BookMyDoctor_WebAPI.Services.Chat;
+﻿using System.Collections.Concurrent;
+using BookMyDoctor_WebAPI.RequestModel.Chat;
 
 namespace BookMyDoctor_WebAPI.Services.Chat
 {
     public class BookingBackendHandler
     {
-        private readonly BookingBackend _api; // backend thật để gọi REST API
+        private readonly IBookingBackend _api;
 
-        private static readonly Dictionary<string, SessionState> _sessions = new();
+        // Dùng ConcurrentDictionary để tránh lỗi race-condition
+        private static readonly ConcurrentDictionary<string, SessionState> _sessions = new();
 
-        public BookingBackendHandler(BookingBackend api)
+        public BookingBackendHandler(IBookingBackend api)
         {
             _api = api;
         }
 
-        public async Task<string> HandleAsync(LlmStructuredOutput llm, string sessionId, int? userId)
+        /// <summary>
+        /// Xử lý intent từ LLM và gọi backend tương ứng.
+        /// </summary>
+        public async Task<string> HandleAsync(
+            LlmStructuredOutput llm,
+            string sessionId,
+            int? userId,
+            CancellationToken ct = default)
         {
-            if (!_sessions.TryGetValue(sessionId, out var state))
+            // Lấy hoặc tạo mới state cho session hiện tại
+            var state = _sessions.GetOrAdd(sessionId, _ => new SessionState());
+
+            // Nếu LLM không hiểu intent → trả về naturalReply như chatbot thuần
+            if (llm.Intent == Intent.Unknown)
             {
-                state = new SessionState();
-                _sessions[sessionId] = state;
+                return string.IsNullOrWhiteSpace(llm.NaturalReply)
+                    ? "Xin lỗi, tôi chưa hiểu yêu cầu của bạn."
+                    : llm.NaturalReply;
             }
 
-            if (llm.Intent == Intent.Unknown)
-                return llm.NaturalReply;
+            // Đảm bảo Extra không bị null
+            var extra = llm.Extra ?? new Dictionary<string, object?>();
 
-            // ===== SearchDoctors =====
+            // ================== SearchDoctors ==================
             if (llm.Intent == Intent.SearchDoctors)
             {
-                var name = llm.Extra?.GetValueOrDefault("doctorName")?.ToString();
-                var dept = llm.Extra?.GetValueOrDefault("department")?.ToString();
+                var name = extra.TryGetValue("doctorName", out var nameObj)
+                    ? nameObj?.ToString()
+                    : null;
+
+                var dept = extra.TryGetValue("department", out var deptObj)
+                    ? deptObj?.ToString()
+                    : null;
 
                 var doctors = await _api.SearchDoctorsAsync(
-                    name, dept, null, null, null, CancellationToken.None);
+                    name,
+                    dept,
+                    gender: null,
+                    phone: null,
+                    workDate: null,
+                    ct);
 
                 if (doctors.Count == 0)
                     return "Không tìm thấy bác sĩ phù hợp.";
 
-                return string.Join("\n", doctors.Select(d => $"• {d.Name} – {d.Department}"));
+                return string.Join("\n",
+                    doctors.Select(d => $"• {d.Name} – {d.Department}"));
             }
 
-            // ===== GetBusySlots =====
+            // ================== GetBusySlots ==================
             if (llm.Intent == Intent.GetBusySlots)
             {
-                if (!llm.Extra!.TryGetValue("doctorId", out var docObj))
-                    return "Bạn cần cho tôi biết ID bác sĩ.";
+                if (!extra.TryGetValue("doctorId", out var docObj) ||
+                    !int.TryParse(docObj?.ToString(), out var doctorId))
+                {
+                    return "Bạn cần cho tôi biết ID bác sĩ (số nguyên).";
+                }
 
-                if (!llm.Extra.TryGetValue("date", out var dateObj) ||
+                if (!extra.TryGetValue("date", out var dateObj) ||
                     string.IsNullOrWhiteSpace(dateObj?.ToString()))
+                {
                     return "Bạn muốn kiểm tra lịch ngày nào vậy?";
+                }
 
                 if (!DateOnly.TryParse(dateObj!.ToString(), out var date))
-                    return "Ngày bạn cung cấp không hợp lệ.";
+                {
+                    return "Ngày bạn cung cấp không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.";
+                }
 
-                var doctorId = Convert.ToInt32(docObj);
-
-                var slots = await _api.GetBusySlotsAsync(doctorId, date, CancellationToken.None);
+                var slots = await _api.GetBusySlotsAsync(doctorId, date, ct);
 
                 if (slots.Count == 0)
                     return "Không có lịch bận trong ngày này.";
 
-                return string.Join("\n", slots.Select(s => $"• {s.AppointHour} – {s.Status}"));
+                return string.Join("\n",
+                    slots.Select(s => $"• {s.AppointHour} – {s.Status}"));
             }
-            // ===== CreatePublicBooking =====
-            if (llm.Intent == Intent.CreatePublicBooking)
+
+            // ================== CreatePublicBooking ==================
+            // 1) Nếu LLM đã trả doctorId → dùng luôn
+            int doctorId = -1;
+
+            if (extra.TryGetValue("doctorId", out var docIdObj) &&
+                int.TryParse(docIdObj?.ToString(), out var parsedId))
             {
-                if (!llm.Extra!.ContainsKey("symptom") && state.Symptom == null)
+                doctorId = parsedId;
+            }
+            else
+            {
+                // 2) Nếu không có doctorId → Lấy doctorName
+                if (!extra.TryGetValue("doctorName", out var docNameObj))
                 {
-                    state.IsWaitingSymptom = true;
-                    return "Bạn gặp triệu chứng gì để tôi chọn bác sĩ phù hợp?";
+                    return "Dạ anh/chị muốn khám với bác sĩ nào ạ? (Tên bác sĩ)";
                 }
 
-                if (state.IsWaitingSymptom && llm.Extra.ContainsKey("symptom"))
-                {
-                    state.Symptom = llm.Extra["symptom"]?.ToString();
-                    state.IsWaitingSymptom = false;
-                }
+                var name = docNameObj?.ToString() ?? "";
 
-                if (!llm.Extra.TryGetValue("doctorId", out var docIdObj))
-                    return "Bạn muốn đặt với bác sĩ nào?";
+                // 3) Tự động tìm bác sĩ theo tên
+                var found = await _api.SearchDoctorsAsync(name, null, null, null, null, ct);
 
-                if (!llm.Extra.TryGetValue("date", out var dateObj) ||
-                    string.IsNullOrWhiteSpace(dateObj?.ToString()))
-                    return "Bạn muốn khám ngày nào?";
+                if (found.Count == 0)
+                    return $"Dạ em không tìm thấy bác sĩ nào tên '{name}' ạ.";
 
-                if (!llm.Extra.TryGetValue("time", out var timeObj) ||
-                    string.IsNullOrWhiteSpace(timeObj?.ToString()))
-                    return "Bạn muốn khám lúc mấy giờ?";
+                if (found.Count > 1)
+                    return $"Dạ tên '{name}' có nhiều bác sĩ, anh/chị mô tả thêm khoa hoặc giới tính giúp em nhé.";
 
-                if (!DateOnly.TryParse(dateObj!.ToString(), out var date))
-                    return "Ngày bạn cung cấp không hợp lệ.";
-
-                if (!TimeOnly.TryParse(timeObj!.ToString(), out var time))
-                    return "Giờ bạn cung cấp không hợp lệ.";
-
-                var doctorId = Convert.ToInt32(docIdObj);
-
-                var payload = new PublicBookingRequestDto(
-                    FullName: "Khách Online",
-                    Phone: "0000000000",
-                    Email: "guest@example.com",
-                    Date: date,
-                    DoctorId: doctorId,
-                    AppointHour: time,
-                    Gender: null,
-                    DateOfBirth: null,
-                    Symptom: state.Symptom
-                );
-
-                var result = await _api.CreatePublicAsync(payload, CancellationToken.None);
-
-                return $"Đặt lịch thành công lúc {time} ngày {date} với {result.DoctorName}. Mã lịch: {result.AppointmentCode}.";
+                doctorId = found[0].DoctorId;
             }
 
-            // ===== CancelBooking =====
-            if (llm.Intent == Intent.CancelBooking)
-            {
-                var id = Convert.ToInt32(llm.Extra!["bookingId"]);
-                await _api.CancelAsync(id, CancellationToken.None);
-                return $"Đã hủy lịch hẹn mã {id}.";
-            }
 
-            return llm.NaturalReply;
+            // Fallback: nếu có naturalReply thì dùng luôn
+            if (!string.IsNullOrWhiteSpace(llm.NaturalReply))
+                return llm.NaturalReply;
+
+            return "Hiện tôi chưa hỗ trợ yêu cầu này, bạn có thể diễn đạt lại giúp tôi không?";
         }
     }
 

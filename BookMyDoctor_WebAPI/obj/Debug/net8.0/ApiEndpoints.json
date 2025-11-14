@@ -426,22 +426,6 @@
   },
   {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
-    "Method": "DeleteAppointment",
-    "RelativePath": "api/Patients/DeleteAppointment",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "appointId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "BookMyDoctor_WebAPI.Controllers.PatientsController",
     "Method": "DeletePatient",
     "RelativePath": "api/Patients/DeletePatient",
     "HttpMethod": "DELETE",

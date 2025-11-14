@@ -77,10 +77,10 @@ namespace BookMyDoctor_WebAPI.Controllers
             try
             {
                 if (doctorId <= 0)
-                    return BadRequest(new { message = "doctorId must be > 0" });
+                    return BadRequest(new { message = "doctorId phải > 0" });
 
                 if (!DateOnly.TryParse(date, out var d))
-                    return BadRequest(new { message = "date must be yyyy-MM-dd" });
+                    return BadRequest(new { message = "ngày phải có định dạng yyyy-MM-dd" });
 
                 var busy = await _svc.GetBusySlotsAsync(doctorId, d.ToDateTime(TimeOnly.MinValue), ct);
                 return Ok(busy);

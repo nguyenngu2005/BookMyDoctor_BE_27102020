@@ -51,23 +51,6 @@ namespace BookMyDoctor_WebAPI.Services
 
         public async Task<IEnumerable<DoctorScheduleRequest>> GetAllDoctorSchedulesAsync(CancellationToken ct)
             => await _repo.GetAllDoctorSchedulesAsync(ct);
-        //{
-        //    return await _context.Schedules
-        //        .AsNoTracking()
-        //        .Include(s => s.Doctor)
-        //        .Select(s => new DoctorScheduleRequest
-        //        {
-        //            ScheduleId = s.ScheduleId,
-        //            DoctorId = s.DoctorId,
-        //            DoctorName = s.Doctor != null ? (s.Doctor.Name ?? string.Empty) : string.Empty,
-        //            WorkDate = s.WorkDate,
-        //            StartTime = s.StartTime,
-        //            EndTime = s.EndTime,
-        //            Status = s.Status ?? "Scheduled",
-        //            IsActive = s.IsActive         
-        //        })
-        //        .ToListAsync(ct);
-        //}
 
         public async Task<IReadOnlyList<Schedule>> GetDoctorSchedulesAsync(
             int doctorId,
@@ -79,9 +62,9 @@ namespace BookMyDoctor_WebAPI.Services
         }
 
         public async Task<List<DoctorScheduleRequest>> GetDoctorSchedulesByNameAsync(
-    string? doctorName,
-    DateOnly? date,
-    CancellationToken ct = default)
+            string? doctorName,
+            DateOnly? date,
+            CancellationToken ct = default)
         {
             var query = _context.Schedules
                 .Include(s => s.Doctor)
@@ -118,6 +101,7 @@ namespace BookMyDoctor_WebAPI.Services
 
             return result;
         }
+
         // ========== Commands ==========
 
         public async Task<Schedule> AddScheduleAsync(Schedule schedule, CancellationToken ct = default)
@@ -132,17 +116,12 @@ namespace BookMyDoctor_WebAPI.Services
                 .AsNoTracking()
                 .AnyAsync(d => d.DoctorId == schedule.DoctorId, ct);
             if (!doctorExists)
-                throw new InvalidOperationException("Doctor not found.");
-
-            // Mỗi bác sĩ chỉ 1 lịch/ngày (tuỳ business rule của bạn)
-            var workDateDup = await _repo.CheckWorkDateAsync(schedule.DoctorId, schedule.WorkDate, ct);
-            if (workDateDup)
-                throw new InvalidOperationException("This doctor already has a schedule for that date.");
+                throw new InvalidOperationException("Không tìm thấy bác sĩ.");
 
             // Không trùng khung giờ trong cùng ngày
             var sameDay = await _repo.GetByDoctorAndDateAsync(schedule.DoctorId, schedule.WorkDate, ct);
             if (sameDay.Any(s => IsOverlap(schedule.StartTime, schedule.EndTime, s.StartTime, s.EndTime)))
-                throw new InvalidOperationException("Schedule time overlaps with an existing schedule.");
+                throw new InvalidOperationException("Khung giờ này bị trùng với một lịch làm việc khác của bác sĩ.");
 
             schedule.Status ??= "Scheduled";
 
@@ -165,7 +144,7 @@ namespace BookMyDoctor_WebAPI.Services
             var sameDay = await _repo.GetByDoctorAndDateAsync(schedule.DoctorId, schedule.WorkDate, ct);
             if (sameDay.Any(s => s.ScheduleId != schedule.ScheduleId &&
                                  IsOverlap(schedule.StartTime, schedule.EndTime, s.StartTime, s.EndTime)))
-                throw new InvalidOperationException("Updated schedule overlaps with another.");
+                throw new InvalidOperationException("Lịch sau khi cập nhật đang bị trùng với một lịch khác.");
 
             var ok = await _repo.UpdateAsync(schedule, ct);
             if (ok)
@@ -189,14 +168,14 @@ namespace BookMyDoctor_WebAPI.Services
         private static void ValidateSchedule(Schedule schedule)
         {
             if (schedule.WorkDate == default)
-                throw new ArgumentException("WorkDate is required.");
+                throw new ArgumentException("Ngày làm việc (WorkDate) là bắt buộc.");
 
             if (schedule.StartTime >= schedule.EndTime)
-                throw new ArgumentException("Start time must be before end time.");
+                throw new ArgumentException("Giờ bắt đầu phải sớm hơn giờ kết thúc.");
 
             var status = schedule.Status ?? "Scheduled";
             if (!_validStatuses.Contains(status))
-                throw new ArgumentException("Invalid status. Allowed: Scheduled, Completed, Cancelled.");
+                throw new ArgumentException("Trạng thái không hợp lệ. Chỉ cho phép: Scheduled, Completed, Cancelled.");
         }
 
         private static bool IsOverlap(TimeOnly aStart, TimeOnly aEnd, TimeOnly bStart, TimeOnly bEnd)

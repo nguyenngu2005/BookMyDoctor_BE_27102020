@@ -21,8 +21,8 @@ namespace BookMyDoctor_WebAPI.Services.Chat
 
             LlmStructuredOutput llm = LlmJsonParser.Parse(json);
 
-            // ✅ Truyền luôn UserId xuống handler
-            string reply = await _handler.HandleAsync(llm, req.SessionId, req.UserId);
+            // Truyền ct xuống Handler
+            string reply = await _handler.HandleAsync(llm, req.SessionId, req.UserId, ct);
 
             return new ChatReply { Reply = reply };
         }

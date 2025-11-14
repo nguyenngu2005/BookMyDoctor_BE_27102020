@@ -727,28 +727,6 @@
         }
       }
     },
-    "/api/Patients/DeleteAppointment": {
-      "delete": {
-        "tags": [
-          "Patients"
-        ],
-        "parameters": [
-          {
-            "name": "appointId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Profile/profile-me": {
       "get": {
         "tags": [

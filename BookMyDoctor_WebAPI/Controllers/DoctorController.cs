@@ -86,7 +86,7 @@ namespace BookMyDoctor_WebAPI.Controllers
             CancellationToken ct = default)
         {
             if (doctorId <= 0)
-                return BadRequest(new { message = "doctorId is required and must be > 0" });
+                return BadRequest(new { message = "doctorId phải > 0" });
 
             try
             {

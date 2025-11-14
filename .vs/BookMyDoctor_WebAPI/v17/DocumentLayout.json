@@ -3,72 +3,43 @@
   "WorkspaceRootPath": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\controllers\\schedulecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\controllers\\schedulecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\controllers\\chatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\controllers\\chatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\services\\chat\\bookingbackendhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\chat\\bookingbackendhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\services\\chat\\chatservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\chat\\chatservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\requestmodel\\chat\\chatrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\requestmodel\\chat\\chatrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{428AB698-BC54-4EAF-82AA-659493E908AA}|Test_BookMyDoctor\\Test_BookMyDoctor.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\test_bookmydoctor\\authservicetest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{428AB698-BC54-4EAF-82AA-659493E908AA}|Test_BookMyDoctor\\Test_BookMyDoctor.csproj|solutionrelative:test_bookmydoctor\\authservicetest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\services\\chat\\llmjsonparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\chat\\llmjsonparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\requestmodel\\chat\\llmstructuredoutput.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\requestmodel\\chat\\llmstructuredoutput.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\services\\chat\\bookingbackend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\chat\\bookingbackend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\bookmydoctor_webapi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\bookmydoctor_webapi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\PC\\AppData\\Roaming\\Microsoft\\UserSecrets\\b806244e-ce73-4364-80bf-6bf96f86d54f\\secrets.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\controllers\\chatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\controllers\\chatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\services\\chat\\geminiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\chat\\geminiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\requestmodel\\chat\\chatmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\requestmodel\\chat\\chatmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\services\\chat\\chatservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\chat\\chatservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\requestmodel\\chat\\chatreply.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\requestmodel\\chat\\chatreply.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\requestmodel\\chat\\intents.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\requestmodel\\chat\\intents.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\requestmodel\\chat\\backenddtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\requestmodel\\chat\\backenddtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\repositories\\schedulerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\repositories\\schedulerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|e:\\fa25\\back\\bookmydoctor_be_27102020 (1)\\bookmydoctor_webapi\\services\\chat\\bookingbackend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527DE433-CF6A-4444-BBE0-AA2576BFC183}|BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj|solutionrelative:bookmydoctor_webapi\\services\\chat\\bookingbackend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -78,7 +49,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1117,
-          "SelectedChildIndex": 17,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -90,219 +61,130 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "AuthServiceTest.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\AuthServiceTest.cs",
-              "RelativeDocumentMoniker": "Test_BookMyDoctor\\AuthServiceTest.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\Test_BookMyDoctor\\AuthServiceTest.cs",
-              "RelativeToolTip": "Test_BookMyDoctor\\AuthServiceTest.cs",
-              "ViewState": "AgIAAE0AAAAAAAAAAAAAAFwAAABPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T09:05:52.871Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "BookingBackendHandler.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
-              "ViewState": "AgIAAHMAAAAAAAAAAAAAAIUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:50:51.007Z",
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Properties\\launchSettings.json",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Properties\\launchSettings.json",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-14T16:36:39.892Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Program.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Program.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Program.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Program.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Program.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAYwC8AAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:42:22.78Z",
+              "DocumentIndex": 4,
+              "Title": "BookMyDoctor_WebAPI",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\BookMyDoctor_WebAPI.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-14T16:34:45.174Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "ChatMessage.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatMessage.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatMessage.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatMessage.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatMessage.cs",
+              "DocumentIndex": 5,
+              "Title": "secrets.json",
+              "DocumentMoniker": "C:\\Users\\PC\\AppData\\Roaming\\Microsoft\\UserSecrets\\b806244e-ce73-4364-80bf-6bf96f86d54f\\secrets.json",
+              "ToolTip": "C:\\Users\\PC\\AppData\\Roaming\\Microsoft\\UserSecrets\\b806244e-ce73-4364-80bf-6bf96f86d54f\\secrets.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:37:23.547Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ChatController.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAUwDUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:33:26.614Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "BookingBackend.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
-              "ViewState": "AgIAAE8AAAAAAAAAAAAcwGQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:30:27.26Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LlmJsonParser.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAAwFgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:23:02.163Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "GeminiClient.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:12:49.363Z",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-14T16:31:50.492Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "ChatService.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAA1wB4AAAAAAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Program.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Program.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Program.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Program.cs",
+              "ViewState": "AgIAAOQAAAAAAAAAAAAWwO8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T08:12:06.101Z",
+              "WhenOpened": "2025-11-14T16:14:29.607Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ChatController.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Controllers\\ChatController.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAQwCwAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-14T16:15:30.078Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LlmJsonParser.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\LlmJsonParser.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAIwE8AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-14T16:06:30.789Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "LlmStructuredOutput.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\LlmStructuredOutput.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\LlmStructuredOutput.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\LlmStructuredOutput.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\LlmStructuredOutput.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Title": "GeminiClient.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\GeminiClient.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T07:49:48.475Z",
+              "WhenOpened": "2025-11-14T16:06:22.737Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Intents.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\Intents.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\Intents.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\Intents.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\Intents.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "ChatService.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\ChatService.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAMwBsAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T07:40:50.886Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ChatRequest.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatRequest.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatRequest.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatRequest.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T07:40:45.491Z",
+              "WhenOpened": "2025-11-14T16:04:07.177Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "ChatReply.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatReply.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatReply.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatReply.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\ChatReply.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T07:40:41.194Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "BackendDtos.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\BackendDtos.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\BackendDtos.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\RequestModel\\Chat\\BackendDtos.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\RequestModel\\Chat\\BackendDtos.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABNAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T07:40:25.922Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "ScheduleRepository.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Repositories\\ScheduleRepository.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Repositories\\ScheduleRepository.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Repositories\\ScheduleRepository.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Repositories\\ScheduleRepository.cs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAxwEAAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T07:36:31.581Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ScheduleController.cs",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\Controllers\\ScheduleController.cs",
-              "ViewState": "AgIAAIMAAAAAAAAAAAAqwJcAAAANAAAAAAAAAA==",
+              "Title": "BookingBackendHandler.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackendHandler.cs",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAYwEYAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T07:16:22.426Z",
+              "WhenOpened": "2025-11-14T16:04:02.497Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\appsettings.json",
-              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\appsettings.json",
-              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\appsettings.json",
-              "RelativeToolTip": "BookMyDoctor_WebAPI\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-12T06:03:14.87Z"
+              "DocumentIndex": 9,
+              "Title": "BookingBackend.cs",
+              "DocumentMoniker": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
+              "RelativeDocumentMoniker": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
+              "ToolTip": "E:\\FA25\\Back\\BookMyDoctor_BE_27102020 (1)\\BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
+              "RelativeToolTip": "BookMyDoctor_WebAPI\\Services\\Chat\\BookingBackend.cs",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAYwFQAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-14T16:03:56.567Z",
+              "EditorCaption": ""
             }
           ]
         },

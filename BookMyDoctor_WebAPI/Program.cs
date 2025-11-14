@@ -44,17 +44,23 @@ builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-//============== AI Chatbox =========================
-builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("GoogleAi"));
-builder.Services.Configure<BackendOptions>(builder.Configuration.GetSection("Backend"));
+// ========== Cấu hình Gemini ==========
+builder.Services.Configure<GeminiOptions>(
+    builder.Configuration.GetSection("GoogleAi"));
 
-// Typed HttpClient cho Gemini & Backend thật
 builder.Services.AddHttpClient<GeminiClient>();
-builder.Services.AddHttpClient<BookingBackend>();
 
-// Handler AI + ChatService
-builder.Services.AddSingleton<BookingBackendHandler>();
+// ========== Cấu hình Backend (Booking) ==========
+builder.Services.Configure<BackendOptions>(
+    builder.Configuration.GetSection("Backend"));
+
+// Quan trọng: map IBookingBackend -> BookingBackend qua HttpClient
+builder.Services.AddHttpClient<IBookingBackend, BookingBackend>();
+
+// ========== Chat layer ==========
+builder.Services.AddScoped<BookingBackendHandler>();
 builder.Services.AddScoped<ChatService>();
+
 
 // ============= !!! QUAN TRỌNG: Hasher DI =============
 // ❌ BỎ dòng cũ vì PasswordHasher là static helper, không inject được:
@@ -231,3 +237,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

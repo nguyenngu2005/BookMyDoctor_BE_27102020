@@ -27,20 +27,20 @@ namespace BookMyDoctor_WebAPI.Services
         public async Task<(bool Success, string Message)> CreateDoctorAccountAsync(CreateDoctorRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
-                return (false, "Username and password are required.");
+                return (false, "Tên đăng nhập và mật khẩu là bắt buộc.");
 
             // Check username already exists
             var existingUser = await _userRepo.ExistsByUsernameAsync(request.Username);
             if (existingUser)
-                return (false, "Username already exists.");
+                return (false, "Tên đăng nhập đã tồn tại.");
 
             var existingEmail = await _userRepo.ExistsByEmailAsync(request.Email);
             if (existingEmail)
-                return (false, "Email number already in use.");
+                return (false, "Email này đã được sử dụng.");
 
             var existingPhone = await _userRepo.ExistsByPhoneAsync(request.Phone);
             if (existingPhone)
-                return (false, "Phone number already in use.");
+                return (false, "Số điện thoại này đã được sử dụng.");
 
             // Hash password
             var (hash, salt) = PasswordHasher.CreateHashSha512(request.Password);
@@ -73,14 +73,14 @@ namespace BookMyDoctor_WebAPI.Services
                 Identification = request.Identification
             };
 
-            await _doctorRepo.AddDoctorAsync(newDoctor);    
+            await _doctorRepo.AddDoctorAsync(newDoctor);
             await _context.SaveChangesAsync();
 
             var defaultDays = new[]
             {
-                DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
-                DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday
-            };
+        DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
+        DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday
+    };
             var defaultStart = new TimeOnly(8, 0);
             var defaultEnd = new TimeOnly(17, 0);
             var weeksToGenerate = 1;
@@ -115,7 +115,7 @@ namespace BookMyDoctor_WebAPI.Services
                 await _context.SaveChangesAsync();
             }
 
-            return (true, "Doctor account created successfully.");
+            return (true, "Tạo tài khoản bác sĩ thành công.");
         }
     }
 }

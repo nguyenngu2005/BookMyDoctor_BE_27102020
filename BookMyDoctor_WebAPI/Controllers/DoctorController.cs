@@ -102,5 +102,12 @@ namespace BookMyDoctor_WebAPI.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra lỗi nội bộ. Vui lòng thử lại sau." });
             }
         }
+        [HttpGet("count")]
+        public async Task<IActionResult> Count(CancellationToken ct)
+        {
+            var count = await _service.CountDoctorsAsync(ct);
+            return Ok(count);
+        }
+
     }
 }

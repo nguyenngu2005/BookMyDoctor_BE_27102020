@@ -508,6 +508,18 @@
         }
       }
     },
+    "/api/Doctors/count": {
+      "get": {
+        "tags": [
+          "Doctors"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Owner/create-doctor": {
       "post": {
         "tags": [

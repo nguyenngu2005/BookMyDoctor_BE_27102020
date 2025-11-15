@@ -10,6 +10,7 @@ namespace BookMyDoctor_WebAPI.Services
     {
         Task<IReadOnlyList<Doctor>> GetAllDoctorsAsync(CancellationToken ct = default);
         Task<Doctor?> GetDoctorByIdAsync(int doctorId, CancellationToken ct = default);
+        Task<int> CountDoctorsAsync(CancellationToken ct = default);
 
         Task<IReadOnlyList<Doctor>> SearchDoctorAsync(
             string? name = null,
@@ -57,6 +58,12 @@ namespace BookMyDoctor_WebAPI.Services
             return await _db.Doctors
                 .AsNoTracking()
                 .FirstOrDefaultAsync(d => d.DoctorId == doctorId, ct);
+        }
+        public async Task<int> CountDoctorsAsync(CancellationToken ct = default)
+        {
+            return await _db.Doctors.CountAsync(ct);
+            // hoặc lọc Status:
+            // return await _db.Doctors.Where(d => d.IsActive).CountAsync(ct);
         }
 
         public async Task<IReadOnlyList<Doctor>> SearchDoctorAsync(

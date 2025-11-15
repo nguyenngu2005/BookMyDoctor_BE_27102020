@@ -265,6 +265,16 @@
   },
   {
     "ContainingType": "BookMyDoctor_WebAPI.Controllers.DoctorsController",
+    "Method": "Count",
+    "RelativePath": "api/Doctors/count",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BookMyDoctor_WebAPI.Controllers.DoctorsController",
     "Method": "Delete",
     "RelativePath": "api/Doctors/DeleteDoctor",
     "HttpMethod": "DELETE",

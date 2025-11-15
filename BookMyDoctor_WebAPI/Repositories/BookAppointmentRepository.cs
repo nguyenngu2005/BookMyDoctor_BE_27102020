@@ -13,7 +13,12 @@ public record ScheduleInfo(
     TimeOnly StartTime,
     TimeOnly EndTime
 );
-
+public sealed class UserContact
+{
+    public string? FullName { get; set; }
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+}
 public sealed class PatientLite
 {
     public int PatientId { get; set; }
@@ -25,6 +30,7 @@ public sealed class PatientLite
 // ====== Interface + Implement trong cùng file ======
 public interface IBookingRepository
 {
+    Task<UserContact?> GetUserContactAsync(int userId, CancellationToken ct);
     Task<ScheduleInfo?> FindScheduleAsync(int doctorId, DateOnly date, CancellationToken ct);
     Task<ScheduleInfo?> GetScheduleByIdAsync(int scheduleId, CancellationToken ct);
     Task<bool> IsSlotAvailableAsync(int scheduleId, TimeOnly hour, CancellationToken ct);
@@ -62,6 +68,30 @@ public sealed class BookingRepository : IBookingRepository
 
     public async Task<bool> IsSlotAvailableAsync(int scheduleId, TimeOnly hour, CancellationToken ct)
         => !await _db.Appointments.AnyAsync(a => a.ScheduleId == scheduleId && a.AppointHour == hour, ct);
+    public async Task<UserContact?> GetUserContactAsync(int userId, CancellationToken ct)
+    {
+        // Ví dụ nếu DB của bạn có bảng Users và Patients giống mình nhớ:
+        // users: UserId, Username, Email, Phone
+        // patients: PatientId, UserId, Name, Phone, Email ...
+
+        var query =
+            from u in _db.Users
+            where u.UserId == userId
+            join p in _db.Patients
+                on u.UserId equals p.UserId into gj
+            from p in gj.DefaultIfEmpty()
+            select new UserContact
+            {
+                // Ưu tiên tên từ patient, fallback username
+                FullName = p != null && p.Name != null ? p.Name : u.Username,
+                // Ưu tiên email user, fallback email patient (tuỳ bạn muốn ngược lại cũng được)
+                Email = !string.IsNullOrEmpty(u.Email) ? u.Email : p!.Email,
+                // Ưu tiên phone user, fallback phone patient
+                Phone = !string.IsNullOrEmpty(u.Phone) ? u.Phone : p!.Phone
+            };
+
+        return await query.FirstOrDefaultAsync(ct);
+    }
 
     public async Task<int> GetOrCreatePatientByEmailAsync(string email, string name, string phone, string? gender, DateOnly? dob, CancellationToken ct)
     {

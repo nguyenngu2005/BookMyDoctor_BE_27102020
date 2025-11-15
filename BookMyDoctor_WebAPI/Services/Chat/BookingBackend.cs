@@ -1,5 +1,6 @@
 ﻿using BookMyDoctor_WebAPI.RequestModel.Chat;
 using Microsoft.Extensions.Options;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -8,6 +9,8 @@ namespace BookMyDoctor_WebAPI.Services.Chat
     // Dùng đúng model hiện tại của BookingController/BookingService
     public interface IBookingBackend
     {
+        Task<List<DoctorBasicInfo>> GetAvailableDoctorsAsync(DateOnly date, CancellationToken ct);
+
         Task<IReadOnlyList<DoctorDto>> SearchDoctorsAsync(
             string? name,
             string? department,
@@ -26,6 +29,9 @@ namespace BookMyDoctor_WebAPI.Services.Chat
             CancellationToken ct);
 
         Task<bool> CancelAsync(int bookingId, CancellationToken ct);
+
+        // 🔹 Chỉ KHAI BÁO, không viết thân hàm trong interface
+        Task<int> CountDoctorsAsync(CancellationToken ct);
     }
 
     public class BackendOptions
@@ -56,48 +62,63 @@ namespace BookMyDoctor_WebAPI.Services.Chat
 
         // ===================== Doctors/Search-Doctors =====================
         public async Task<IReadOnlyList<DoctorDto>> SearchDoctorsAsync(
-            string? name,
-            string? department,
-            string? gender,
-            string? phone,
-            DateTimeOffset? workDate,
-            CancellationToken ct)
+    string? name,
+    string? department,
+    string? gender,
+    string? phone,
+    DateTimeOffset? workDate,
+    CancellationToken ct)
         {
-            const string path = "api/Doctors/Search-Doctors";
+            var path = "api/Doctors/Search-Doctors";
             var q = new List<string>();
 
-            if (!string.IsNullOrWhiteSpace(name))
-                q.Add("name=" + Uri.EscapeDataString(name));
-            if (!string.IsNullOrWhiteSpace(department))
-                q.Add("department=" + Uri.EscapeDataString(department));
-            if (!string.IsNullOrWhiteSpace(gender))
-                q.Add("gender=" + Uri.EscapeDataString(gender));
-            if (!string.IsNullOrWhiteSpace(phone))
-                q.Add("phone=" + Uri.EscapeDataString(phone));
-            if (workDate.HasValue)
-                q.Add("workDate=" + workDate.Value.ToString("yyyy-MM-dd"));
+            if (!string.IsNullOrWhiteSpace(name)) q.Add("name=" + Uri.EscapeDataString(name));
+            if (!string.IsNullOrWhiteSpace(department)) q.Add("department=" + Uri.EscapeDataString(department));
+            if (!string.IsNullOrWhiteSpace(gender)) q.Add("gender=" + Uri.EscapeDataString(gender));
+            if (!string.IsNullOrWhiteSpace(phone)) q.Add("phone=" + Uri.EscapeDataString(phone));
+            if (workDate.HasValue) q.Add("workDate=" + workDate.Value.ToString("yyyy-MM-dd"));
 
             var url = q.Count > 0 ? $"{path}?{string.Join("&", q)}" : path;
 
             var res = await _http.GetAsync(url, ct);
             var body = await res.Content.ReadAsStringAsync(ct);
 
+            // 🔹 Nếu backend trả 404 = không có bác sĩ phù hợp → coi như list rỗng, KHÔNG ném exception
+            if (res.StatusCode == HttpStatusCode.NotFound)
+            {
+                _logger.LogInformation("SearchDoctorsAsync NotFound for {Url} → 0 doctor.", url);
+                return Array.Empty<DoctorDto>();
+            }
+
+            // 🔹 Các lỗi khác (500, 401, 403, ...) mới ném exception
             if (!res.IsSuccessStatusCode)
                 throw new HttpRequestException(
                     $"Backend GET {url} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var data = JsonSerializer.Deserialize<List<DoctorDto>>(body, options)
+            var data = JsonSerializer.Deserialize<List<DoctorDto>>(
+                           body,
+                           new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                        ?? new List<DoctorDto>();
 
             return data;
         }
 
+
         // ===================== Booking/info_slot_busy =====================
+        public async Task<List<DoctorBasicInfo>> GetAvailableDoctorsAsync(DateOnly date, CancellationToken ct)
+        {
+            var url = $"api/Doctors/Search-Doctors?workDate={date:yyyy-MM-dd}";
+            try
+            {
+                var result = await _http.GetFromJsonAsync<List<DoctorBasicInfo>>(url, ct);
+                return result ?? new List<DoctorBasicInfo>();
+            }
+            catch
+            {
+                return new List<DoctorBasicInfo>();
+            }
+        }
+
         public async Task<IReadOnlyList<BusySlot>> GetBusySlotsAsync(
             int doctorId,
             DateOnly date,
@@ -163,6 +184,30 @@ namespace BookMyDoctor_WebAPI.Services.Chat
                     $"Backend DELETE {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
 
             return true;
+        }
+
+        // ===================== Doctors/All-Doctors → Count =====================
+        public async Task<int> CountDoctorsAsync(CancellationToken ct)
+        {
+            const string path = "api/Doctors/All-Doctors";
+
+            var res = await _http.GetAsync(path, ct);
+            var body = await res.Content.ReadAsStringAsync(ct);
+
+            if (!res.IsSuccessStatusCode)
+                throw new HttpRequestException(
+                    $"Backend GET {path} → {(int)res.StatusCode} {res.ReasonPhrase}. Body: {body}");
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            // All-Doctors trả về List<DoctorDto>
+            var data = JsonSerializer.Deserialize<List<DoctorDto>>(body, options)
+                       ?? new List<DoctorDto>();
+
+            return data.Count;
         }
     }
 }

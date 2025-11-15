@@ -53,9 +53,35 @@ public sealed partial class BookingService : IBookingService
     // ==============================
     public async Task<BookingResult> BookAsync(PublicBookingRequest req, int? currentUserId, CancellationToken ct)
     {
-        // 1) Validate cơ bản
-        GuardEmail(req.Email);
-        GuardPhone(req.Phone);
+        // ===== 0) Chuẩn hoá thông tin ban đầu =====
+        string finalFullName = (req.FullName ?? "").Trim();
+        string finalPhone = (req.Phone ?? "").Trim();
+        string finalEmail = (req.Email ?? "").Trim().ToLowerInvariant();
+
+        // Nếu đã login → ưu tiên thông tin từ DB
+        if (currentUserId.HasValue)
+        {
+            var contact = await _repo.GetUserContactAsync(currentUserId.Value, ct);
+
+            if (contact is not null)
+            {
+                if (!string.IsNullOrWhiteSpace(contact.FullName))
+                    finalFullName = contact.FullName.Trim();
+
+                if (!string.IsNullOrWhiteSpace(contact.Phone))
+                    finalPhone = contact.Phone.Trim();
+
+                if (!string.IsNullOrWhiteSpace(contact.Email))
+                    finalEmail = contact.Email.Trim().ToLowerInvariant();
+            }
+        }
+
+        // Nếu chưa login → bắt buộc phải có email & phone hợp lệ
+        if (!currentUserId.HasValue)
+        {
+            GuardEmail(finalEmail);
+            GuardPhone(finalPhone);
+        }
 
         var todayVn = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(DateTime.UtcNow, _tzVN).Date);
         if (req.Date < todayVn)
@@ -79,34 +105,37 @@ public sealed partial class BookingService : IBookingService
             throw new AppException("Khung giờ này đã có người đặt.");
 
         // 4) Xác định/khởi tạo Patient
-        var normalizedEmail = req.Email.Trim().ToLowerInvariant();
         int patientId;
+        var normalizedEmail = finalEmail;   // dùng email đã xác định ở trên
 
         if (currentUserId.HasValue)
         {
             // User đã đăng nhập → tạo/ghép Patient theo UserId
             patientId = await _repo.GetOrCreatePatientByUserAsync(
                 userId: currentUserId.Value,
-                name: req.FullName.Trim(),
-                phone: req.Phone.Trim(),
+                name: finalFullName,
+                phone: finalPhone,
                 gender: req.Gender,
                 dob: req.DateOfBirth,
                 ct: ct);
 
             // Gộp mọi patient ẩn danh (đặt bằng email trước đó) vào patient chính của user
-            await _repo.MergeAnonymousPatientsByEmailIntoUserAsync(
-                email: normalizedEmail,
-                userId: currentUserId.Value,
-                targetPatientId: patientId,
-                ct: ct);
+            if (!string.IsNullOrWhiteSpace(normalizedEmail))
+            {
+                await _repo.MergeAnonymousPatientsByEmailIntoUserAsync(
+                    email: normalizedEmail,
+                    userId: currentUserId.Value,
+                    targetPatientId: patientId,
+                    ct: ct);
+            }
         }
         else
         {
             // Khách chưa login → create/find theo email
             patientId = await _repo.GetOrCreatePatientByEmailAsync(
                 email: normalizedEmail,
-                name: req.FullName.Trim(),
-                phone: req.Phone.Trim(),
+                name: finalFullName,
+                phone: finalPhone,
                 gender: req.Gender,
                 dob: req.DateOfBirth,
                 ct: ct);
@@ -134,14 +163,18 @@ public sealed partial class BookingService : IBookingService
         await _repo.SetAppointmentCodeIfSupportedAsync(appointId, bookingCode, ct);
 
         // 7) Gửi email xác nhận (best-effort)
-        await SendBookingEmailAsync(
-            toEmail: req.Email,
-            toDisplayName: req.FullName,
-            doctorName: schedule.DoctorName,
-            date: req.Date,
-            hour: req.AppointHour,
-            bookingCode: bookingCode,
-            ct: ct);
+        // Nếu vì lý do gì vẫn chưa có email (user chưa khai báo), thì bỏ qua bước gửi mail
+        if (!string.IsNullOrWhiteSpace(finalEmail))
+        {
+            await SendBookingEmailAsync(
+                toEmail: finalEmail,
+                toDisplayName: string.IsNullOrWhiteSpace(finalFullName) ? "Quý khách" : finalFullName,
+                doctorName: schedule.DoctorName,
+                date: req.Date,
+                hour: req.AppointHour,
+                bookingCode: bookingCode,
+                ct: ct);
+        }
 
         // 8) Kết quả
         return new BookingResult

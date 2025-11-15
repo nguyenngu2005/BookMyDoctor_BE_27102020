@@ -50,11 +50,11 @@ namespace BookMyDoctor_WebAPI.Services.Chat
                 prompt = BuildPrompt(session);
             }
 
-            string json;
+            string raw;
             try
             {
                 // 4) Gọi Gemini với prompt gồm cả history
-                json = await _gemini.AskAsync(prompt, ct);
+                raw = await _gemini.AskAsync(prompt, ct);
             }
             catch (Exception ex)
             {
@@ -65,30 +65,34 @@ namespace BookMyDoctor_WebAPI.Services.Chat
                 };
             }
 
+            // 5) Cố gắng tách JSON sạch từ output (loại bỏ ***json, ```json, text thừa...)
+            var pureJson = ExtractJson(raw);
+
             LlmStructuredOutput llm;
             try
             {
-                llm = LlmJsonParser.Parse(json);
+                llm = LlmJsonParser.Parse(pureJson);
             }
-            catch
+            catch (Exception)
             {
-                // Nếu parse JSON thất bại thì trả thẳng nội dung model trả về
+                // Nếu tới đây mà vẫn parse fail thì coi như model trả sai format
+                // Không trả raw JSON nữa để tránh user thấy ***json {...}
                 return new ChatReply
                 {
-                    Reply = json
+                    Reply = "Xin lỗi, hệ thống AI tạm thời không hiểu được phản hồi từ mô hình. Bạn có thể hỏi lại theo cách khác giúp em được không ạ?"
                 };
             }
 
-            // 5) Đưa structured output cho BookingBackendHandler xử lý (tìm bác sĩ, đặt lịch, hủy, v.v.)
+            // 6) Đưa structured output cho BookingBackendHandler xử lý (tìm bác sĩ, đặt lịch, hủy, v.v.)
             var replyText = await _handler.HandleAsync(llm, sessionId, req.UserId, ct);
 
-            // 6) Lưu câu trả lời cuối cùng (đã qua handler) vào history
+            // 7) Lưu câu trả lời cuối cùng (đã qua handler) vào history
             lock (session)
             {
                 session.Turns.Add(new ChatTurn("assistant", replyText));
             }
 
-            // 7) Trả về cho FE
+            // 8) Trả về cho FE
             return new ChatReply
             {
                 Reply = replyText
@@ -102,9 +106,9 @@ namespace BookMyDoctor_WebAPI.Services.Chat
         {
             var sb = new StringBuilder();
 
-            // Tuỳ bạn, có thể thêm system prompt ở trên cùng nếu GeminiClient không làm nữa.
+            // Nếu GeminiClient không add system prompt thì có thể thêm ở đây.
             // sb.AppendLine("Bạn là chatbot hỗ trợ đặt lịch khám cho phòng khám BookMyDoctor...");
-            // sb.AppendLine("Hãy luôn trả lời dưới dạng JSON theo schema đã được cấu hình.");
+            // sb.AppendLine("Luôn trả lời dưới dạng JSON đúng schema.");
             // sb.AppendLine();
 
             foreach (var turn in session.Turns)
@@ -115,10 +119,45 @@ namespace BookMyDoctor_WebAPI.Services.Chat
                     sb.AppendLine($"Trợ lý: {turn.Content}");
             }
 
-            // Gợi ý cuối cùng cho model
             sb.AppendLine("Tiếp theo, hãy trả lời bước kế tiếp dưới dạng JSON theo đúng schema đã được cấu hình.");
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Cố gắng trích phần JSON chính từ output của model.
+        /// Ví dụ model trả:
+        /// ***json
+        /// { "intent": "...", ... }
+        /// ***endjson
+        /// → hàm sẽ cắt còn lại phần {...}.
+        /// </summary>
+        private static string ExtractJson(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                return "{}";
+
+            // Loại bỏ markdown fence hoặc prefix riêng
+            var cleaned = raw.Trim();
+
+            // Một số prompt hay dùng ***json hoặc ```json
+            cleaned = cleaned
+                .Replace("```json", string.Empty, StringComparison.OrdinalIgnoreCase)
+                .Replace("```", string.Empty, StringComparison.OrdinalIgnoreCase)
+                .Replace("***json", string.Empty, StringComparison.OrdinalIgnoreCase)
+                .Replace("***endjson", string.Empty, StringComparison.OrdinalIgnoreCase)
+                .Trim();
+
+            // Nếu vẫn còn text rác, lấy đoạn từ { đầu tiên tới } cuối cùng
+            var firstBrace = cleaned.IndexOf('{');
+            var lastBrace = cleaned.LastIndexOf('}');
+            if (firstBrace >= 0 && lastBrace > firstBrace)
+            {
+                return cleaned.Substring(firstBrace, lastBrace - firstBrace + 1);
+            }
+
+            // Không tìm thấy ngoặc nhọn → trả nguyên, để Parse xử lý lỗi
+            return cleaned;
         }
 
         // ======= Các class hỗ trợ lưu history =======

@@ -14,6 +14,8 @@ public interface IAuthRepository
 }
 
 public sealed class AuthRepository : IAuthRepository
+dshahdká
+dsađasd 
 {
     private readonly DBContext _ctx;
     public AuthRepository(DBContext ctx) => _ctx = ctx;
